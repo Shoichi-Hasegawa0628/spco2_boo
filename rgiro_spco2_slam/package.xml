@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>rgiro_spco2_slam</name>
+  <version>1.0.0</version>
+  <description>The 'rgiro_spco2_slam' package is the ROS implementation of SpCoSLAM 2.0: https://github.com/a-taniguchi/SpCoSLAM2.</description>
+
+  <maintainer email="nakashima.takeshi@em.ci.ritsumei.ac.jp">Takeshi Nakashima</maintainer>
+  <license>MIT</license>
+  <url type="website">https://gitlab.com/emlab/RULO</url>
+  <author email="a.taniguchi@em.ci.ritsumei.ac.jp">Akira Taniguchi</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>message_generation</depend>
+  <depend>message_runtime</depend>
+
+</package>

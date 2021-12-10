@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="trial_name" default="test"/>
+  <arg name="dataset_Num" default="0"/>
+
+  <!-- Launch gmapping. -->
+  <arg name="scan" default="scan"/>
+  <param name="use_sim_time" value="true"/>
+  <node pkg="rgiro_gmapping" name="slam_gmapping" type="slam_gmapping">
+    <param name="scan" value="$(arg scan)"/>
+    <param name="particles" value="30"/>
+    <param name="xmin" value="-30.0"/>
+    <param name="ymin" value="-20.0"/>
+    <param name="xmax" value="30.0"/>
+    <param name="ymax" value="20.0"/>
+    <param name="ogain" value="5.0"/>
+    <param name="resampleThreshold" value="1.0"/>     
+  </node>
+
+  <!-- Launch map_saver -->
+  <node pkg="rgiro_spco2_slam" name="spco2_map_savering" type="spco2_map_saver.py" output="screen">
+    <param name="trial_name" value="$(arg trial_name)"/>
+  </node>
+
+  <!-- Launch run_rosbag 
+
+  <node pkg="rgiro_spco2_slam" name="play_rosbag" type="run_rosbag.py" output="screen">
+    <param name="trial_name" value="$(arg trial_name)"/>
+    <param name="dataset_NUM" value="$(arg dataset_Num)"/>
+  </node>
+  -->
+
+  <!-- Launch SpCoSLAM -->
+  <node pkg="rgiro_spco2_slam" name="SpCoSLAM" type="spco2_learn_concepts.py" output="screen">
+    <param name="trial_name" value="$(arg trial_name)"/>
+    <param name="dataset_NUM" value="$(arg dataset_Num)"/>
+  </node>
+
+  <!-- includeing launch files -->
+  <!-- <include file="$(find rgiro_spco2_visualization)/launch/gaussian_distribution.launch"/> -->
+
+
+  <!-- Launch spco2_word_data & spco2_word_features -->
+  <node pkg="rgiro_spco2_slam" name="spco2_word_features" type="spco2_word_features.py" output="screen"/>
+  <!-- <node pkg="rgiro_spco2_slam" name="spco2_word_data" type="spco2_word_data.py" output="screen"/> -->
+  <node pkg="rgiro_spco2_slam" name="spco2_image_features" type="spco2_image_features.py" output="screen"/>
+
+</launch>

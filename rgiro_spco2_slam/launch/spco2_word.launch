@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Launch spco2_word_data & spco2_word_features -->
+  <node pkg="rgiro_spco2_slam" name="spco2_word_data" type="spco2_word_data.py" output="screen"/> 
+
+</launch>
