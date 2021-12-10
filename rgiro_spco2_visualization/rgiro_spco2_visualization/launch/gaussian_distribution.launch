@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<launch>
+  <node name="gaussian_distribution_node" pkg="rgiro_spco2_visualization" type="gaussian_distribution_node" output="screen">
+    <param name="threshold" value="0.001" />
+    <param name="radius" value="4.0" />
+    <param name="resolution" value="0.015" />
+    <param name="frame_rate" value="480" />
+    <param name="cycle_time" value="60" />
+    <param name="frame" value="map" />
+    <param name="color_file" value="config/color.csv" />
+    <remap from="gaussian_in" to="transfer_learning/gaussian_distribution" />
+    <remap from="gaussian_out" to="/em/spcot/gaussian_distributions" />
+    <remap from="gaussian_srv" to="/em/spcot/gaussian_request" />
+  </node>
+
+  <node name="gaussian_distribution_chatter" pkg="rgiro_spco2_visualization" type="gaussian_distribution_chatter.py" output="screen"/>
+
+</launch>

@@ -5,15 +5,19 @@
   <arg name="dataset_Num" default="0"/>
 
   <!-- Launch gmapping. -->
-  <arg name="scan" default="scan"/>
+  <arg name="hsrb/base_scan" default="hsrb/base_scan"/>
   <param name="use_sim_time" value="true"/>
   <node pkg="rgiro_gmapping" name="slam_gmapping" type="slam_gmapping">
-    <param name="scan" value="$(arg scan)"/>
+    <param name="hsrb/base_scan" value="$(arg hsrb/base_scan)"/>
     <param name="particles" value="30"/>
-    <param name="xmin" value="-30.0"/>
+    <!-- <param name="xmin" value="-30.0"/>
     <param name="ymin" value="-20.0"/>
     <param name="xmax" value="30.0"/>
-    <param name="ymax" value="20.0"/>
+    <param name="ymax" value="20.0"/> -->
+    <param name="xmin" value="-5"/>
+    <param name="xmax" value="5"/>
+    <param name="ymin" value="-5"/>
+    <param name="ymax" value="5"/>
     <param name="ogain" value="5.0"/>
     <param name="resampleThreshold" value="1.0"/>     
   </node>
@@ -38,7 +42,7 @@
   </node>
 
   <!-- includeing launch files -->
-  <!-- <include file="$(find rgiro_spco2_visualization)/launch/gaussian_distribution.launch"/> -->
+  <include file="$(find rgiro_spco2_visualization)/launch/gaussian_distribution.launch"/>
 
 
   <!-- Launch spco2_word_data & spco2_word_features -->

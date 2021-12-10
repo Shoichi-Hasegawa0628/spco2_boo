@@ -114,11 +114,11 @@ from __init__ import * # SyntaxWarning を無視
 # Reading data for image feature (NOT USE)
 def ReadImageData(trialname, step):
   FT = []
-  for s in xrange(step):
+  for s in range(step):
     for line in open( datafolder + trialname + '/img/ft' + str(s+1) + '.csv', 'r'):
     #for line in open( datasetfolder + datasetname + 'img/ft' + str(s+1) + '.csv', 'r'):
       itemList = line[:].split(',')
-    FT.append( [float(itemList[i]) for i in xrange(DimImg)] )
+    FT.append( [float(itemList[i]) for i in range(DimImg)] )
   return FT
 
 # Reading data for image feature
@@ -132,7 +132,7 @@ def ReadImageData2(trialname, datasetname, step, clocktime):
   print ("step=",step)
   #time.sleep(5)
   FT = []
-  for s in xrange(step-1):
+  for s in range(step-1):
     savefilepath = datafolder + trialname + '/img/ft' + str(s+1) + '.csv'
     print (savefilepath)
     for line in open( datafolder + trialname + '/img/ft' + str(s+1) + '.csv', 'r'):
@@ -140,14 +140,14 @@ def ReadImageData2(trialname, datasetname, step, clocktime):
       print ("itemList=",itemList)
       print ("s=",s)
       #time.sleep(5)
-    FT.append( [float(itemList[i]) for i in xrange(DimImg)] )
+    FT.append( [float(itemList[i]) for i in range(DimImg)] )
   
   # Read image data at current time
   
   files = glob.glob(datasetfolder + datasetname + Descriptor + "/*.csv")
   files.sort()
   #print "files:",files
-  files2 = [files[i][len(datasetfolder)+len(datasetname)+len(Descriptor)+1:-4] for i in xrange(len(files))]
+  files2 = [files[i][len(datasetfolder)+len(datasetname)+len(Descriptor)+1:-4] for i in range(len(files))]
   #print "files2:",files2
   #print "files2:"
   #time.sleep(5)
@@ -175,11 +175,11 @@ def ReadImageData2(trialname, datasetname, step, clocktime):
   #time.sleep(5)
   for line in open( f_temp, 'r'):
       itemList = line[:].split(',')
-  FT.append( [float(itemList[i]) for i in xrange(DimImg)] )
+  FT.append( [float(itemList[i]) for i in range(DimImg)] )
   
   # Write new data file
   fp = open( datafolder + trialname + '/img/ft' + str(step) + '.csv', 'w')
-  for i in xrange(DimImg):
+  for i in range(DimImg):
     fp.write(repr(float(itemList[i]))+',')
   fp.close()
   
@@ -223,18 +223,18 @@ def ReadWordData(step, trialname, particle):
 
   ##場所の名前の多項分布のインデックス用
   W_list = []
-  for n in xrange(len(Otb)):
-    for j in xrange(len(Otb[n])):
+  for n in range(len(Otb)):
+    for j in range(len(Otb[n])):
       if ( (Otb[n][j] in W_list) == False ):
         W_list.append(Otb[n][j])
         #print str(W_list),len(W_list)
   
   ##時刻tデータごとにBOW化(?)する、ベクトルとする
-  Otb_BOW = [ [0 for i in xrange(len(W_list))] for n in xrange(len(Otb)) ]
+  Otb_BOW = [ [0 for i in range(len(W_list))] for n in range(len(Otb)) ]
   
-  for n in xrange(len(Otb)):
-    for j in xrange(len(Otb[n])):
-      for i in xrange(len(W_list)):
+  for n in range(len(Otb)):
+    for j in range(len(Otb[n])):
+      for i in range(len(W_list)):
         if ( W_list[i] == Otb[n][j] ):
           Otb_BOW[n][i] = Otb_BOW[n][i] + 1
   
@@ -242,7 +242,7 @@ def ReadWordData(step, trialname, particle):
   #固定ラグ活性化の場合の処理(samp.100を更新)
   #if (LMLAG != 0) and (tau >= 1):
   #  fp = open( filename + '/out_gmm/' + str(particle) + '_samp.'+str(samps), 'w')
-  #  for n in xrange(N):
+  #  for n in range(N):
   #    fp.write(str(WordSegList[n])+"\n")
   #  #fp.write("\n")
   #  fp.close()
@@ -330,24 +330,24 @@ def ParticleSearcher(trialname):
   #print steplist
   
   #C[1:t-1],I[1:t-1]のパーティクルID(step-1時点)と現在のparticleIDの対応付け
-  CTtemp = [[] for r in xrange(R)]
-  ITtemp = [[] for r in xrange(R)]
+  CTtemp = [[] for r in range(R)]
+  ITtemp = [[] for r in range(R)]
   #Read spatial_concept_index(Ct) and position_distributions_index(It) results of the privious teaching step
-  for particle in xrange(R):
+  for particle in range(R):
     CTtemp[particle],ITtemp[particle] = ReaditCtData(trialname, step, particle)
   #print "CTtemp,ITtemp:",CTtemp,ITtemp
   
-  p = [[Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for i in xrange(R)] for c in xrange(m_count)]
+  p = [[Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for i in range(R)] for c in range(m_count)]
   #Read trajectory infomation (ID,x,y,theta,weight,previousID) of all gmapping step
-  for c in xrange(m_count):
+  for c in range(m_count):
     p[c] = ReadParticleData(c+1, trialname)        #m_countのindexは1から始まる   
     ######非効率なので、前回のパーティクル情報を使う (未実装) 
   #print "p:",p
-  p_trajectory = [ [Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for c in xrange(m_count)] for i in xrange(R) ]
-  CT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
-  IT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
+  p_trajectory = [ [Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for c in range(m_count)] for i in range(R) ]
+  CT = [ [0 for s in range(step-1)] for i in range(R) ]
+  IT = [ [0 for s in range(step-1)] for i in range(R) ]
   
-  for i in xrange(R):
+  for i in range(R):
     c_count = m_count -1  #一番最後の配列から処理
     #print c_count,i
     p_trajectory[i][c_count] = p[c_count][i]
@@ -361,26 +361,26 @@ def ParticleSearcher(trialname):
       IT[i] = [1]
     elif (steplist[-2][0] == m_count): #m_countが直前のステップにおいても同じ場合の例外処理
       print ("m_count", steplist[-2][0], steplist[-1][0])
-      CT[i] = [ CTtemp[i][s] for s in xrange(step-1)]
-      IT[i] = [ ITtemp[i][s] for s in xrange(step-1)]
+      CT[i] = [ CTtemp[i][s] for s in range(step-1)]
+      IT[i] = [ ITtemp[i][s] for s in range(step-1)]
     
-    for c in xrange(m_count-1):  #0～最後から2番目の配列まで
+    for c in range(m_count-1):  #0～最後から2番目の配列まで
       preID = p[c_count][p_trajectory[i][c_count].id].pid
       p_trajectory[i][c_count-1] = p[c_count-1][preID]
       
       if (step != 1) and (step != 2) and (steplist[-2][0] != m_count):
        if (steplist[-2][0] == c_count): #CTtemp,ITtempを現在のパーティクルID順にする
-          CT[i] = [ CTtemp[preID][s] for s in xrange(step-1)]
-          IT[i] = [ ITtemp[preID][s] for s in xrange(step-1)]
+          CT[i] = [ CTtemp[preID][s] for s in range(step-1)]
+          IT[i] = [ ITtemp[preID][s] for s in range(step-1)]
           #print i,preID
           #print i, c, c_count-1, preID
       c_count -= 1
   
-  X_To = [ [Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for c in xrange(step)] for i in xrange(R) ]
-  for i in xrange(R):
+  X_To = [ [Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for c in range(step)] for i in range(R) ]
+  for i in range(R):
     #preID = p[m_count-1][p_trajectory[i][c_count].id].pid
     #test
-    X_To[i] = [p_trajectory[i][steplist[s][0]-1] for s in xrange(step)] ##steplist[s][0]-1はsでよいのでは？->ダメ
+    X_To[i] = [p_trajectory[i][steplist[s][0]-1] for s in range(step)] ##steplist[s][0]-1はsでよいのでは？->ダメ
   
   return X_To, step, m_count, CT, IT
 
@@ -419,7 +419,7 @@ def WriteParticleData(filename, step, particle, Xp, p_weight, ct, it, CT, IT):
   cstep = step - 1
   #ID,x,y,theta,weight,pID,Ct,it
   fp = open( filename + "/particle" + str(particle) + ".csv", 'w')
-  for s in xrange(step-1):
+  for s in range(step-1):
       fp.write( str(s) + "," + str(Xp[s].id) + "," + str(Xp[s].x) + "," + str(Xp[s].y) + "," + str(Xp[s].theta) + "," + str(Xp[s].weight) + "," + str(Xp[s].pid) + "," + str(CT[s]) + "," + str(IT[s]) )
       fp.write('\n')
   fp.write( str(cstep) + "," + str(Xp[cstep].id) + "," + str(Xp[cstep].x) + "," + str(Xp[cstep].y) + "," + str(Xp[cstep].theta) + "," + str(p_weight) + "," + str(Xp[cstep].pid) + "," + str(ct) + "," + str(it) )
@@ -428,26 +428,26 @@ def WriteParticleData(filename, step, particle, Xp, p_weight, ct, it, CT, IT):
 #パーティクルごとに単語情報を保存
 def WriteWordData(filename, particle, W_list_i):
   fp = open( filename + "/W_list" + str(particle) + ".csv", 'w')
-  for w in xrange(len(W_list_i)):
+  for w in range(len(W_list_i)):
     fp.write(W_list_i[w]+",")
   fp.close()
 
 #重み (log) を保存 (gmapping読み込み用) 
 def WriteWeightData(trialname, m_count, p_weight_log):
   fp = open( datafolder + trialname + "/weight/" + str(m_count) + ".csv", 'w')
-  for r in xrange(R):
+  for r in range(R):
     fp.write(str(p_weight_log[r])+",")
   fp.close()
 
 #パーティクルごとのCtとitのインデックス対応を保存
 def WriteIndexData(filename, particle, ccitems, icitems,ct,it):
   fp = open( filename + "/index" + str(particle) + ".csv", 'w')
-  for c in xrange(len(ccitems)):
+  for c in range(len(ccitems)):
     fp.write(str(ccitems[c][0])+",")
   if ( ct == (max(ccitems)[0]+1) ):
     fp.write(str(ct) + ",")
   fp.write("\n")
-  for i in xrange(len(icitems)):
+  for i in range(len(icitems)):
     fp.write(str(icitems[i][0])+",")
   #if ( it == (max(icitems)[0]+1) ):
   #  fp.write(str(it) + ",")
@@ -457,43 +457,43 @@ def WriteIndexData(filename, particle, ccitems, icitems,ct,it):
 # Saving data for parameters Θ of spatial concepts
 def SaveParameters(filename, particle, phi, pi, W, theta, mu, sig):
   fp = open( filename + "/phi" + str(particle) + ".csv", 'w')
-  for i in xrange(len(phi)):
-    for j in xrange(len(phi[i])):
+  for i in range(len(phi)):
+    for j in range(len(phi[i])):
       fp.write(repr(phi[i][j])+",")
     fp.write('\n')
   fp.close()
   
   fp2 = open( filename + "/pi" + str(particle) + ".csv", 'w')
-  for i in xrange(len(pi)):
+  for i in range(len(pi)):
     fp2.write(repr(pi[i])+",")
   fp2.write('\n')
   fp2.close()
   
   fp3 = open( filename + "/W" + str(particle) + ".csv", 'w')
-  for i in xrange(len(W)):
-    for j in xrange(len(W[i])):
+  for i in range(len(W)):
+    for j in range(len(W[i])):
       fp3.write(repr(W[i][j])+",")
     fp3.write('\n')
   fp3.close()
   
   fp4 = open( filename + "/theta" + str(particle) + ".csv", 'w')
-  for i in xrange(len(theta)):
-    for j in xrange(len(theta[i])):
+  for i in range(len(theta)):
+    for j in range(len(theta[i])):
       fp4.write(repr(theta[i][j])+",")
     fp4.write('\n')
   fp4.close()
   
   fp5 = open(filename + "/mu" + str(particle) + ".csv", 'w')
-  for k in xrange(len(mu)):
-      for dim in xrange(dimx):
+  for k in range(len(mu)):
+      for dim in range(dimx):
         fp5.write(repr(mu[k][dim])+',')
       fp5.write('\n')
   fp5.close()
   
   fp6 = open(filename + "/sig" + str(particle) + ".csv", 'w')
-  for k in xrange(len(sig)):
-      for dim in xrange(dimx):
-        for dim2 in xrange(dimx):
+  for k in range(len(sig)):
+      for dim in range(dimx):
+        for dim2 in range(dimx):
           fp6.write(repr(sig[k][dim][dim2])+',')
         #fp6.write('\n')
       fp6.write('\n')
@@ -564,25 +564,27 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       ic = collections.Counter(IT) #｛it番号：カウント数｝
       K = len(ic)   #位置分布の数
       
-      ccitems = cc.items()  # [(ct番号,カウント数),(),...]
-      cclist = [ccitems[c][1] for c in xrange(L)] #各場所概念ｃごとのカウント数
+      ccitems = list(cc.items())  # [(ct番号,カウント数),(),...]
+      #print("Display {}".format(ccitems))
+      #print(type(ccitems))
+      cclist = [ccitems[c][1] for c in range(L)] #各場所概念ｃごとのカウント数
       
-      icitems = ic.items()  # [(it番号,カウント数),(),...]
-      iclist = [icitems[i][0] for i in xrange(K)] #各位置分布iごとのindex番号
+      icitems = list(ic.items())  # [(it番号,カウント数),(),...]
+      iclist = [icitems[i][0] for i in range(K)] #各位置分布iごとのindex番号
       
       #場所概念のindexごとにITを分解
-      ITc = [[] for c in xrange(L)]
+      ITc = [[] for c in range(L)]
       #c = 0
-      for s in xrange(cstep):
-        for c in xrange(L):
+      for s in range(cstep):
+        for c in range(L):
           if (ccitems[c][0] == CT[s]):  ##場所概念のインデックス集合ccに含まれるカテゴリ番号のみ
             #print s,c,CT[s],ITc[c]
             ITc[c].append(IT[s])
             #c += 1
-      icc = [collections.Counter(ITc[c]) for c in xrange(L)] #｛cごとのit番号：カウント数｝の配列
-      #Kc = [len(icc[c]) for c in xrange(L)]  #場所概念ｃごとの位置分布の種類数≠カウント数
+      icc = [collections.Counter(ITc[c]) for c in range(L)] #｛cごとのit番号：カウント数｝の配列
+      #Kc = [len(icc[c]) for c in range(L)]  #場所概念ｃごとの位置分布の種類数≠カウント数
       
-      icclist = [ [icc[c][iclist[i]] for i in xrange(K)] for c in xrange(L)] #場所概念ｃにおける各位置分布iごとのカウント数
+      icclist = [ [icc[c][iclist[i]] for i in range(K)] for c in range(L)] #場所概念ｃにおける各位置分布iごとのカウント数
       #print np.array(icclist)
       
       Nct   = sum(cclist) #場所概念の総カウント数=データ数(前ステップ:t-1)
@@ -591,18 +593,18 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       print (Nct,cclist) #, Nit_l
       
       CRP_CT  = np.array(cclist + [alpha0]) / (Nct + alpha0)
-      CRP_ITC = np.array([ np.array([ (icclist[c][i]*(icclist[c][i] != 0) + gamma0*(icclist[c][i] == 0)) for i in xrange(K)] + [gamma0]) / (cclist[c] + gamma0) for c in xrange(L) ] + [ np.array([0.0 for i in xrange(K)] + [1.0]) ])
-      #for c in xrange(L):
-      #  for i in xrange(K):
+      CRP_ITC = np.array([ np.array([ (icclist[c][i]*(icclist[c][i] != 0) + gamma0*(icclist[c][i] == 0)) for i in range(K)] + [gamma0]) / (cclist[c] + gamma0) for c in range(L) ] + [ np.array([0.0 for i in range(K)] + [1.0]) ])
+      #for c in range(L):
+      #  for i in range(K):
       #    if (icclist2[c][i] == 0):
       #      icclist2[c][i] = gamma0
-      #CRP_ITC = np.array( [np.array([icclist2[c][i] for i in xrange(K)] + [gamma0]) / (cclist[c] + gamma0) for c in xrange(L)] + [np.array([0.0 for i in xrange(K)] + [1.0])] )
+      #CRP_ITC = np.array( [np.array([icclist2[c][i] for i in range(K)] + [gamma0]) / (cclist[c] + gamma0) for c in range(L)] + [np.array([0.0 for i in range(K)] + [1.0])] )
       
       #print Xp
       xt = XT_list[cstep] #np.array([XT[cstep].x, XT[cstep].y])
-      tpdf = np.array([1.0 for i in xrange(K+1)])
+      tpdf = np.array([1.0 for i in range(K+1)])
       
-      for k in xrange(K+1):
+      for k in range(K+1):
         #データがあるかないか関係のない計算
         #事後t分布用のパラメータ計算
         if (k == K):  #k is newの場合
@@ -624,7 +626,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
         
       
       #ctとitの組をずらっと横に並べる (ベクトル) ->2次元配列で表現 (temp[L+1][K+1]) [L=new][K=exist]は0
-      #temp2 = np.array([[10.0**10 * tpdf[i] * CRP_ITC[c][i] * CRP_CT[c] for i in xrange(K+1)] for c in xrange(L+1)])
+      #temp2 = np.array([[10.0**10 * tpdf[i] * CRP_ITC[c][i] * CRP_CT[c] for i in range(K+1)] for c in range(L+1)])
       print ("--------------------") #####
       #print temp2 #####
       temp22 = 10.0**10 * tpdf.T * (CRP_CT*CRP_ITC.T).T #####
@@ -632,21 +634,21 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       print (temp22) #####
       print ("--------------------") #####
       
-      St_prob = np.array([1.0 for c in xrange(L+1)])
-      Ft_prob = np.array([1.0 for c in xrange(L+1)])
+      St_prob = np.array([1.0 for c in range(L+1)])
+      Ft_prob = np.array([1.0 for c in range(L+1)])
       Bt = sum(ST[cstep]) #発話文中の単語数
       
       #位置分布kの計算と場所概念cの計算を分ける(重複計算を防ぐ)
-      for l in xrange(L+1):
+      for l in range(L+1):
           if (l < L):
             ##単語のカウント数の計算
             #STはすでにBOWなのでデータstepごとのカウント数になっている
-            Nlg = sum([np.array(ST[s])*(CT[s]==ccitems[l][0]) for s in xrange(step-1)])  #sumだとできる
+            Nlg = sum([np.array(ST[s])*(CT[s]==ccitems[l][0]) for s in range(step-1)])  #sumだとできる
             W_temp_log = np.log(np.array(Nlg) + beta0 ) - np.log(sum(Nlg) + G*beta0)
             St_prob[l] = np.exp(sum(np.array(W_temp_log) * np.array(ST[cstep])))
             
             ##画像特徴のカウント数の計算
-            Nle = sum([np.array(FT[s])*(CT[s]==ccitems[l][0]) for s in xrange(step-1)])  #sumだとできる
+            Nle = sum([np.array(FT[s])*(CT[s]==ccitems[l][0]) for s in range(step-1)])  #sumだとできる
             theta_temp_log = np.log(np.array(Nle) + chi0 ) - np.log(sum(Nle) + E*chi0)
             Ft_prob[l] = np.exp(sum(np.array(theta_temp_log) * np.array(FT[cstep]))) #.prod() #要素積
           else:  #ct=lかつit=kのデータがない場合
@@ -704,13 +706,13 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
         cclist.append(1)
         ccitems.append((ct,1))  ##ccitemsも更新する
         if I == K:  #K is new
-          for c in xrange(L):
+          for c in range(L):
             icclist[c].append(0)  #既存の各場所概念ごとに新たな位置分布indexを増やす
-        icclist.append([1*(k==I) for k in xrange(Kp)])  #新たな場所概念かつ新たな位置分布のカウント
+        icclist.append([1*(k==I) for k in range(Kp)])  #新たな場所概念かつ新たな位置分布のカウント
       else:  #L is exist
         cclist[C] += 1
         if I == K:  #K is new
-          for c in xrange(L):
+          for c in range(L):
             icclist[c].append(0)  #既存の各場所概念ごとに新たな位置分布indexを増やす
         icclist[C][I] += 1
       
@@ -723,7 +725,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       #Fixed-lag Rejuvenation
       if (LAG != 0):
         ###カウント数が追加されたデータをもとに、ラグ値ごとにリサンプリング
-        for lag in xrange(LAG-1):
+        for lag in range(LAG-1):
           tau = cstep - LAG + 1 + lag
           if (tau >= 0):
             ###tau = t - LAG + 1 +lagのカウントを除く
@@ -739,23 +741,23 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
             ic.pop(-1)
             K = len(ic)   #位置分布の数
             
-            ccitems = cc.items()  # [(ct番号,カウント数),(),...]
-            cclist = [ccitems[c][1] for c in xrange(L)] #各場所概念ｃごとのカウント数
+            ccitems = list(cc.items())  # [(ct番号,カウント数),(),...]
+            cclist = [ccitems[c][1] for c in range(L)] #各場所概念ｃごとのカウント数
             
-            icitems = ic.items()  # [(it番号,カウント数),(),...]
-            iclist = [icitems[i][0] for i in xrange(K)] #各位置分布iごとのindex番号
+            icitems = list(ic.items())  # [(it番号,カウント数),(),...]
+            iclist = [icitems[i][0] for i in range(K)] #各位置分布iごとのindex番号
             
             #場所概念のindexごとにITを分解
-            ITc = [[] for c in xrange(L)]
+            ITc = [[] for c in range(L)]
             #c = 0
-            for s in xrange(step):
-              for c in xrange(L):
+            for s in range(step):
+              for c in range(L):
                 if (ccitems[c][0] == CT[s]):  ##場所概念のインデックス集合ccに含まれるカテゴリ番号のみ
                   #print s,c,CT[s],ITc[c]
                   ITc[c].append(IT[s])
                   #c += 1
-            icc = [collections.Counter(ITc[c]) for c in xrange(L)] #｛cごとのit番号：カウント数｝の配列
-            icclist = [ [icc[c][iclist[i]] for i in xrange(K)] for c in xrange(L)] #場所概念ｃにおける各位置分布iごとのカウント数
+            icc = [collections.Counter(ITc[c]) for c in range(L)] #｛cごとのit番号：カウント数｝の配列
+            icclist = [ [icc[c][iclist[i]] for i in range(K)] for c in range(L)] #場所概念ｃにおける各位置分布iごとのカウント数
             #print np.array(icclist)
             
             Nct   = sum(cclist) #場所概念の総カウント数=データ数(現ステップから一つ除いたもの)
@@ -763,12 +765,12 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
             
             ###サンプリング式を再計算
             CRP_CT  = np.array(cclist + [alpha0]) / (Nct + alpha0)
-            CRP_ITC = np.array([ np.array([ (icclist[c][i]*(icclist[c][i] != 0) + gamma0*(icclist[c][i] == 0)) for i in xrange(K)] + [gamma0]) / (cclist[c] + gamma0) for c in xrange(L) ] + [ np.array([0.0 for i in xrange(K)] + [1.0]) ])
+            CRP_ITC = np.array([ np.array([ (icclist[c][i]*(icclist[c][i] != 0) + gamma0*(icclist[c][i] == 0)) for i in range(K)] + [gamma0]) / (cclist[c] + gamma0) for c in range(L) ] + [ np.array([0.0 for i in range(K)] + [1.0]) ])
             
             xt = XT_list[tau] #np.array([XT[tau].x, XT[tau].y])
-            tpdf = np.array([1.0 for i in xrange(K+1)])
+            tpdf = np.array([1.0 for i in range(K+1)])
             
-            for k in xrange(K+1):
+            for k in range(K+1):
               #データがあるかないか関係のない計算
               #事後t分布用のパラメータ計算
               if (k == K):  #k is newの場合
@@ -790,7 +792,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
             
             
             #2次元配列で表現 (temp[L+1][K+1]) [L=new][K=exist]は0
-            #temp2 = np.array([[10.0**10 * tpdf[i] * CRP_ITC[c][i] * CRP_CT[c] for i in xrange(K+1)] for c in xrange(L+1)])
+            #temp2 = np.array([[10.0**10 * tpdf[i] * CRP_ITC[c][i] * CRP_CT[c] for i in range(K+1)] for c in range(L+1)])
             print ("--------------------") #####
             #print temp2 #####
             temp22 = 10.0**10 * tpdf.T * (CRP_CT*CRP_ITC.T).T #####
@@ -798,21 +800,21 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
             print (temp22) #####
             print ("--------------------") #####
             
-            St_prob = np.array([1.0 for c in xrange(L+1)])
-            Ft_prob = np.array([1.0 for c in xrange(L+1)])
+            St_prob = np.array([1.0 for c in range(L+1)])
+            Ft_prob = np.array([1.0 for c in range(L+1)])
             Bt = sum(ST[tau]) #発話文中の単語数
             
             #位置分布kの計算と場所概念cの計算を分ける(重複計算を防ぐ)
-            for l in xrange(L+1):
+            for l in range(L+1):
                 if (l < L):
                   ##単語のカウント数の計算
                   #STはすでにBOWなのでデータstepごとのカウント数になっている
-                  Nlg = sum([np.array(ST[s])*(CT[s]==ccitems[l][0]) for s in xrange(step)])  #sumだとできる
+                  Nlg = sum([np.array(ST[s])*(CT[s]==ccitems[l][0]) for s in range(step)])  #sumだとできる
                   W_temp_log = np.log(np.array(Nlg) + beta0 ) - np.log(sum(Nlg) + G*beta0)
                   St_prob[l] = np.exp(sum(np.array(W_temp_log) * np.array(ST[tau])))
                   
                   ##画像特徴のカウント数の計算
-                  Nle = sum([np.array(FT[s])*(CT[s]==ccitems[l][0]) for s in xrange(step)])  #sumだとできる
+                  Nle = sum([np.array(FT[s])*(CT[s]==ccitems[l][0]) for s in range(step)])  #sumだとできる
                   theta_temp_log = np.log(np.array(Nle) + chi0 ) - np.log(sum(Nle) + E*chi0)
                   Ft_prob[l] = np.exp(sum(np.array(theta_temp_log) * np.array(FT[tau]))) #.prod() #要素積
                 else:  #ct=lかつit=kのデータがない場合
@@ -871,17 +873,17 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
               cclist.append(1)
               ccitems.append((ct,1))  ##ccitemsも更新する
               if I_tau == K:  #K is new
-                for c in xrange(L):
+                for c in range(L):
                   icclist[c].append(0)  #既存の各場所概念ごとに新たな位置分布indexを増やす
-              icclist.append([1*(k==I_tau) for k in xrange(Kp)])  #新たな場所概念かつ新たな位置分布のカウント
+              icclist.append([1*(k==I_tau) for k in range(Kp)])  #新たな場所概念かつ新たな位置分布のカウント
             else:  #L is exist
               cclist[C_tau] += 1
               if I_tau == K:  #K is new
-                for c in xrange(L):
+                for c in range(L):
                   icclist[c].append(0)  #既存の各場所概念ごとに新たな位置分布indexを増やす
               icclist[C_tau][I_tau] += 1
             
-            #for k in xrange(Kp):
+            #for k in range(Kp):
             #  if(k == I_tau):  
             ic[icitems[I_tau][0]] += 1
             #    #print icitems[k][0], ic[icitems[k][0]]
@@ -894,26 +896,26 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       
       #場所概念パラメータΘの更新処理
       #pi = (np.array(cclist) + alpha0) / (Nct+1 + alpha0*Lp)  #np.array(iccList) /  (Nct + alpha0)
-      #phi = [(np.array(icclist[c]) + gamma0) / (cclist[c] + gamma0*Kp) for c in xrange(Lp)]
+      #phi = [(np.array(icclist[c]) + gamma0) / (cclist[c] + gamma0*Kp) for c in range(Lp)]
       pi = (np.array(cclist) + alpha0/float(Lp)) / (Nct+1 + alpha0)  #np.array(iccList) /  (Nct + alpha0)
-      phi = [(np.array(icclist[c]) + gamma0/float(Kp)) / (cclist[c] + gamma0) for c in xrange(Lp)]
+      phi = [(np.array(icclist[c]) + gamma0/float(Kp)) / (cclist[c] + gamma0) for c in range(Lp)]
       
       #Cの場所概念にStのカウントを足す
-      Nlg_c = [sum([np.array(ST[s])*(CT[s]==ccitems[c][0]) for s in xrange(step)]) for c in xrange(Lp)] 
-      #Wc_temp = [(np.array(Nlg_c[c]) + beta0 ) / (sum(Nlg_c[c]) + G*beta0) for c in xrange(Lp)]
-      W = [(np.array(Nlg_c[c]) + beta0 ) / (sum(Nlg_c[c]) + G*beta0) for c in xrange(Lp)] #[Wc_temp[c] for c in xrange(Lp)]
+      Nlg_c = [sum([np.array(ST[s])*(CT[s]==ccitems[c][0]) for s in range(step)]) for c in range(Lp)]
+      #Wc_temp = [(np.array(Nlg_c[c]) + beta0 ) / (sum(Nlg_c[c]) + G*beta0) for c in range(Lp)]
+      W = [(np.array(Nlg_c[c]) + beta0 ) / (sum(Nlg_c[c]) + G*beta0) for c in range(Lp)] #[Wc_temp[c] for c in range(Lp)]
       
       #Cの場所概念にFtのカウントを足す
-      Nle_c = [sum([np.array(FT[s])*(CT[s]==ccitems[c][0]) for s in xrange(step)]) for c in xrange(Lp)] 
-      #thetac_temp = [(np.array(Nle_c[c]) + chi0 ) / (sum(Nle_c[c]) + E*chi0) for c in xrange(Lp)]
-      theta = [(np.array(Nle_c[c]) + chi0 ) / (sum(Nle_c[c]) + E*chi0) for c in xrange(Lp)] # [thetac_temp[c] for c in xrange(Lp)]
+      Nle_c = [sum([np.array(FT[s])*(CT[s]==ccitems[c][0]) for s in range(step)]) for c in range(Lp)]
+      #thetac_temp = [(np.array(Nle_c[c]) + chi0 ) / (sum(Nle_c[c]) + E*chi0) for c in range(Lp)]
+      theta = [(np.array(Nle_c[c]) + chi0 ) / (sum(Nle_c[c]) + E*chi0) for c in range(Lp)] # [thetac_temp[c] for c in range(Lp)]
       
       #Iの位置分布にxtのカウントを足す
-      mNp = [[] for k in xrange(Kp)]
-      nNp = [[] for k in xrange(Kp)]
-      VNp = [[] for k in xrange(Kp)]
+      mNp = [[] for k in range(Kp)]
+      nNp = [[] for k in range(Kp)]
+      VNp = [[] for k in range(Kp)]
       
-      for k in xrange(Kp):
+      for k in range(Kp):
         nk = ic[icitems[k][0]]
         #if(k == I_tau):  ##既存クラスのとき
         #  nk = nk + 1
@@ -935,8 +937,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
         nNp[K] = nN
         VNp[K] = VN
       """
-      MU = mNp #[mNp[k] for k in xrange(Kp)]
-      SIG = [np.array(VNp[k]) / (nNp[k] - dimx - 1) for k in xrange(Kp)]
+      MU = mNp #[mNp[k] for k in range(Kp)]
+      SIG = [np.array(VNp[k]) / (nNp[k] - dimx - 1) for k in range(Kp)]
       
       
       ############### 重みの計算 ###############
@@ -945,20 +947,20 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       ##############################################################
       #Wic = P(X{t}|X{1:t-1},c{1:t-1},i{1:t-1})の計算
       if (wic == 1):
-        sum_itct = np.sum( temp22 )#sum( [CRP_ITC[c][i] * CRP_CT[c] for c in xrange(L+1)] )
+        sum_itct = np.sum( temp22 )#sum( [CRP_ITC[c][i] * CRP_CT[c] for c in range(L+1)] )
         wic_log = np.log(sum_itct)
       ##############################################################
       
       #P(Ft|F{1:t},c{1:t-1},α,χ)の計算
-      wf = np.sum(Ft_prob * CRP_CT) #sum( [Ft_prob[c] * CRP_CT[c] for c in xrange(L+1)] )
+      wf = np.sum(Ft_prob * CRP_CT) #sum( [Ft_prob[c] * CRP_CT[c] for c in range(L+1)] )
       wf_log = np.log(wf)
       #print wf, wf_log
       
       #P(St|S{1:t},c{1:t-1},α,β)の計算
-      psc = np.sum(St_prob * CRP_CT)#sum( [St_prob[c] * CRP_CT[c] for c in xrange(L+1)] )
+      psc = np.sum(St_prob * CRP_CT)#sum( [St_prob[c] * CRP_CT[c] for c in range(L+1)] )
       if (UseLM == 1):
         #単なる単語の生起確率 (頻度+βによるスムージング) :P(St|S{1:t-1},β)
-        Ng = sum([np.array(ST[s]) for s in xrange(step-1)])  #sumだとできる
+        Ng = sum([np.array(ST[s]) for s in range(step-1)])  #sumだとできる
         W_temp2_log = np.log(np.array(Ng) + beta0 ) - log(sum(Ng) + G*beta0)
         ps_log = sum(np.array(W_temp2_log) * np.array(ST[cstep]))
         
@@ -971,20 +973,20 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT):
       #P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β)の計算
       WS_log = ws_log
       if (LMweight == "WS"):
-        #ct_1hot = [ [1*(c==l) for c in xrange(L+1)] for l in xrange(L+1)]
+        #ct_1hot = [ [1*(c==l) for c in range(L+1)] for l in range(L+1)]
         #P_SlC_log = log(psc) #ws_log
-        for i in xrange(step-1):
+        for i in range(step-1):
           step_iter = step-1-i  #stepを逆にたどって計算する
           #print step_iter, step-1,len(ST),len(CT)
           if (step_iter != 1):  #p(S1|β)はパーティクルによらず同じ確率のため計算を省く
-            Nlg_step = sum([np.array(ST[s])*(CT[s]==CT[step_iter-1]) for s in xrange(step_iter-1)])
+            Nlg_step = sum([np.array(ST[s])*(CT[s]==CT[step_iter-1]) for s in range(step_iter-1)])
             #print step_iter, Nlg_step
             W_temp_log_step = np.log(np.array(Nlg_step) + beta0 ) - log(sum(Nlg_step) + G*beta0)
             St_logprob_step = sum(np.array(W_temp_log_step) * np.array(ST[step_iter]))
             WS_log  += St_logprob_step
             
             #単なる単語の生起確率 (頻度+βによるスムージング) :P(S{1:t-1}|β)
-            Ng_step = sum([np.array(ST[s]) for s in xrange(step_iter-1)])  #sumだとできる
+            Ng_step = sum([np.array(ST[s]) for s in range(step_iter-1)])  #sumだとできる
             W_temp2_log_step = np.log(np.array(Ng_step) + beta0 ) - log(sum(Ng_step) + G*beta0)
             ps_log_step = sum(np.array(W_temp2_log_step) * np.array(ST[step_iter]))
             WS_log -= ps_log_step
@@ -1023,7 +1025,7 @@ def multiCPU_latticelm(taple):
       i = int(taple[1])
       filename = taple[0]
       #パーティクルごとに計算
-      #for i in xrange(R):
+      #for i in range(R):
       print ("--------------------------------------------------")
       print ("Particle:",i)
       
@@ -1074,7 +1076,7 @@ def callback(message):
     #Ct:spatial_concept_index of privious teaching
     #It:position_distributions_index of privious teaching
     Xp,step,m_count,CT,IT = ParticleSearcher(trialname)
-    for i in xrange(R): #この例外処理はなんのためにある？
+    for i in range(R): #この例外処理はなんのためにある？
       while (0 in CT[i]) or (0 in IT[i]):
         print ("Error! 0 in CT,IT",CT,IT)
         Xp,step,m_count,CT,IT = ParticleSearcher(trialname)
@@ -1101,26 +1103,26 @@ def callback(message):
     print ("filename",filename)
     print ("trialname",trialname)
 
-    p_weight_log = np.array([0.0 for i in xrange(R)])
-    p_weight = np.array([0.0 for i in xrange(R)])
-    p_WS_log = np.array([0.0 for i in xrange(R)]) ###
-    W_list   = [[] for i in xrange(R)]
-    ST_seq   = [[] for i in xrange(R)]
+    p_weight_log = np.array([0.0 for i in range(R)])
+    p_weight = np.array([0.0 for i in range(R)])
+    p_WS_log = np.array([0.0 for i in range(R)]) ###
+    W_list   = [[] for i in range(R)]
+    ST_seq   = [[] for i in range(R)]
     
     if (UseFT == 1):
       #FT = ReadImageData2(trialname, datasetname, step, clocktime)
       FT = ReadImageData(trialname, step)
     else:
-      FT = [[0 for e in xrange(DimImg)] for s in xrange(step)]
+      FT = [[0 for e in range(DimImg)] for s in range(step)]
     """    2021/03/06 
     p = Pool(multiCPU) #max(int(multiprocessing.cpu_count()/2)-1,2) )
-    taple = [(filename,i) for i in xrange(R)]
+    taple = [(filename,i) for i in range(R)]
     p.map(multiCPU_latticelm, taple)  #パーティクルごとに並列計算
     """    
     #パーティクルごとに計算
-    for i in xrange(R):
+    for i in range(R):
       
-      #for i in xrange(R): ###############
+      #for i in range(R): ###############
       print ("--------------------------------------------------") ###############
       print ("Particle:",i) ###############
       
@@ -1179,7 +1181,7 @@ def callback(message):
       ##最大重みのパーティクルindexと重みを保存する
       fp = open(filename + "/WS.csv", 'w')
       fp.write(str(MAX_WS_particle) + '\n')
-      for particle in xrange(R):
+      for particle in range(R):
         fp.write(str(p_WS[particle]) + ',')
       fp.write('\n')
       fp.close()
@@ -1196,21 +1198,21 @@ def callback(message):
       ##事前処理 (音節の間に空白を挿入) 
       if (tyokuzen == 1) and (LMLAG != 0) and (step-LMLAG >= 1): # and (tyokuzenNPYLM == 1) これがあってもエラーなく動いていた？？（tyokuzenNPYLMが未定義）
         ST_seq_step_LMLAG = ST_seq[MAX_LM_particle][0:step-LMLAG]
-        ST_seq = ST_seq[step-LMLAG:step] #[ [ST_seq[n][j] for j in xrange(len(ST_seq[n]))] for n in xrange(step-LMLAG, len(ST_seq))]
+        ST_seq = ST_seq[step-LMLAG:step] #[ [ST_seq[n][j] for j in range(len(ST_seq[n]))] for n in range(step-LMLAG, len(ST_seq))]
 
         #W_listを更新
-        for n in xrange(step-LMLAG):   ##*_samp.*を読み込む
-          for j in xrange(len(ST_seq_step_LMLAG[n])):
+        for n in range(step-LMLAG):   ##*_samp.*を読み込む
+          for j in range(len(ST_seq_step_LMLAG[n])):
             if ( (ST_seq_step_LMLAG[n][j] in W_list_particle) == False ):
               W_list_particle.append(ST_seq_step_LMLAG[n][j])
 
       #print ST_seq
-      for n in xrange(len(ST_seq)):
+      for n in range(len(ST_seq)):
         ST_seq_temp = "" #[]
         word2 = ""
-        for j in xrange(len(ST_seq[n])):
+        for j in range(len(ST_seq[n])):
           ST_seq_temp += ST_seq[n][j].decode('sjis')
-        for w in xrange(len(ST_seq_temp)): #空白をいれる処理
+        for w in range(len(ST_seq_temp)): #空白をいれる処理
           #if ((word[w] or word[w].encode('sjis')) == ("ぁ" or "ぃ" or "ぅ" or "ぇ" or "ぉ" or "ゃ" or "ゅ" or "ょ" or u'ぁ' or u'ぃ' or u'ぅ' or u'ぇ' or u'ぉ' or u'ゃ' or u'ゅ' or u'ょ')):   # or or word[w].encode('sjis') or word[w]
           word2 = word2 + ST_seq_temp[w] + u" "
           #print u'ぁ',"ぁ",word[w]
@@ -1256,7 +1258,7 @@ def callback(message):
           itemList.pop(itemList.index(""))
         #Otb = Otb + [itemList]
         
-        for j in xrange(len(itemList)):
+        for j in range(len(itemList)):
           if ( (itemList[j] in W_list_particle) == False ):
             W_list_particle.append(itemList[j])
     else:
@@ -1270,7 +1272,7 @@ def callback(message):
     ##最大重みのパーティクルindexと重みを保存する
     fp = open(filename + "/weights.csv", 'w')
     fp.write(str(MAX_weight_particle) + '\n')
-    for particle in xrange(R):
+    for particle in range(R):
       fp.write(str(p_weight[particle]) + ',')
     fp.write('\n')
     fp.close()

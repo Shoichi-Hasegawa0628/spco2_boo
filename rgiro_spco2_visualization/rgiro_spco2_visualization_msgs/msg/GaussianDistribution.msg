@@ -1,0 +1,9 @@
+float64 mean_x
+float64 mean_y
+float64 variance_x
+float64 variance_y
+float64 covariance
+float64 probability
+int32 r
+int32 g
+int32 b

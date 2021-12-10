@@ -78,7 +78,7 @@ def PosteriorParameterGIW(k,nk,step,IT,XT,icitems_k0):
   ###kについて、ITが同じものを集める
   if nk != 0 :  #もしITの中にkがあれば(計算短縮処理)        ##0ワリ回避
     xk = []
-    for s in xrange(step) : 
+    for s in range(step) :
       if IT[s] == icitems_k0 : 
         xk = xk + [ np.array([XT[s].x, XT[s].y]) ]
     m_ML = sum(xk) / float(nk) #fsumではダメ
@@ -88,8 +88,8 @@ def PosteriorParameterGIW(k,nk,step,IT,XT,icitems_k0):
     kN = k0 + nk
     mN = ( k0*m0 + nk*m_ML ) / kN  #dim 次元横ベクトル
     nN = n0 + nk
-    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in xrange(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
-    VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in xrange(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
+    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in range(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
+    VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in range(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
     VN = Check_VN(VN)
     
   else:  #データがないとき
@@ -106,7 +106,7 @@ def PosteriorParameterGIW2(k,nk,step,IT,XT,icitems_k0):
   ###kについて、ITが同じものを集める
   if nk != 0 :  #もしITの中にkがあれば(計算短縮処理)        ##0ワリ回避
     xk = []
-    for s in xrange(step) : 
+    for s in range(step) :
       if IT[s] == icitems_k0 : 
         xk = xk + [ np.array(XT[s]) ]
     m_ML = sum(xk) / float(nk) #fsumではダメ
@@ -116,8 +116,8 @@ def PosteriorParameterGIW2(k,nk,step,IT,XT,icitems_k0):
     kN = k0 + nk
     mN = ( k0*m0 + nk*m_ML ) / kN  #dim 次元横ベクトル
     nN = n0 + nk
-    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in xrange(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
-    VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in xrange(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
+    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in range(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
+    VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in range(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
     VN = Check_VN(VN)
     
   else:  #データがないとき
@@ -141,14 +141,14 @@ def stick_breaking(alpha, k):
 def levenshtein_distance(a, b):
     m = [ [0] * (len(b) + 1) for i in range(len(a) + 1) ]
 
-    for i in xrange(len(a) + 1):
+    for i in range(len(a) + 1):
         m[i][0] = i
 
-    for j in xrange(len(b) + 1):
+    for j in range(len(b) + 1):
         m[0][j] = j
 
-    for i in xrange(1, len(a) + 1):
-        for j in xrange(1, len(b) + 1):
+    for i in range(1, len(a) + 1):
+        for j in range(1, len(b) + 1):
             if a[i - 1] == b[j - 1]:
                 x = 0
             else:
@@ -159,7 +159,7 @@ def levenshtein_distance(a, b):
 
 #remove <s>,<sp>,</s> and "\r", "": if its were segmented to words.
 def Ignore_SP_Tags(itemList):
-  for b in xrange(5):
+  for b in range(5):
     if ("<s><s>" in itemList):
       itemList.pop(itemList.index("<s><s>"))
     if ("<s><sp>" in itemList):
@@ -178,16 +178,16 @@ def Ignore_SP_Tags(itemList):
       itemList.pop(itemList.index(""))
 
   #remove <s>,<sp>,</s>: if its exist in words.
-  for j in xrange(len(itemList)):
+  for j in range(len(itemList)):
     itemList[j] = itemList[j].replace("<s><s>", "")
     itemList[j] = itemList[j].replace("<s>", "")
     itemList[j] = itemList[j].replace("<sp>", "")
     itemList[j] = itemList[j].replace("</s>", "")
 
-  for j in xrange(len(itemList)):
+  for j in range(len(itemList)):
     itemList[j] = itemList[j].replace("\r", "")  
 
-  for b in xrange(5):
+  for b in range(5):
     if ("" in itemList):
       itemList.pop(itemList.index(""))
 

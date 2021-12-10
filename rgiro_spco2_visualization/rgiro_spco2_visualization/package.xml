@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+
+<package format="2">
+  <name>rgiro_spco2_visualization</name>
+  <version>1.0.0</version>
+  <description>The 'rgiro_spco2_visualization' package provides the nodes for visualization of Spatial Concepts in Rviz.</description>
+
+  <maintainer email="nakashima.takeshi@em.ci.ritsumei.ac.jp">Takeshi Nakashima</maintainer>
+  <license>MIT</license>
+  <url type="website">https://gitlab.com/emlab/RULO</url>
+  <author email="kanechika.akinori@em.ci.ritsumei.ac.jp">Akinori Kanechika</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>pcl_ros</depend>
+  <depend>pcl_conversions</depend>
+  <depend>rgiro_spco2_visualization_msgs</depend>
+</package>

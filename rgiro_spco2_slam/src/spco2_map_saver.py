@@ -22,7 +22,7 @@ from __init__ import *
 rospy.init_node('spco2_map_savering')
 trialname = rospy.get_param('~trial_name') # 2021/02/16 [Change]
 
-mapsave = "rosrun map_server spco2_map_saver -f "
+mapsave = "rosrun map_server map_saver -f "
 clocktime = 0.0
 
 #trialname = "test" #raw_input("trialname?(output_folder) >")
