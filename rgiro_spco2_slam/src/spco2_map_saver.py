@@ -23,6 +23,7 @@ rospy.init_node('spco2_map_savering')
 trialname = rospy.get_param('~trial_name') # 2021/02/16 [Change]
 
 mapsave = "rosrun map_server map_saver -f "
+#mapsave = "rosrun map_server spco2_map_saver -f "
 clocktime = 0.0
 
 #trialname = "test" #raw_input("trialname?(output_folder) >")
@@ -42,9 +43,8 @@ def callback(message):
   #m_countのindexは1から始まる
   while (os.path.exists( datafolder + trialname + "/particle/" + str(m_count+1) + ".csv" ) == True):
     m_count += 1
-    print ("m_count",m_count)
-    print ("m_temp",m_temp)
-  
+    print("[SpCo2_map_saver] m_count", m_count, "m_temp", m_temp)
+
   if (m_temp != m_count):
     if (float(clocktime) != float(rospy.get_time())):
       clocktime = rospy.get_time()
@@ -52,7 +52,7 @@ def callback(message):
       #rospy.loginfo("%s", clocktime)
       MSC = mapsave + datafolder + trialname + "/map/map"+ str(m_count)
       p = subprocess.Popen(MSC, shell=True) #, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-      print ("Subprocess run map_saver.",clocktime)
+      print("Subprocess run map_saver.", clocktime)
       fp = open( datafolder + trialname + "/map/map"+ str(m_count) + "_clocktime.txt", 'w')
       fp.write(str(clocktime))
       fp.close()

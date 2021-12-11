@@ -95,7 +95,7 @@ def returnTF():
 
 def load_model():
     # this model has a last conv feature map as 14x14
-    print ("start")
+    print("start")
     model_file = 'wideresnet18_places365.pth.tar'
     if not os.access(os.path.dirname(os.path.abspath(__file__)) + '/' + model_file, os.W_OK):
         os.system(

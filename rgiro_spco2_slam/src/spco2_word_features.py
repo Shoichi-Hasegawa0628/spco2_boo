@@ -41,6 +41,7 @@ import std_msgs.msg
 import std_srvs.srv
 import csv
 import time
+import tf
 
 from rgiro_spco2_slam.srv import spco_data_image
 
@@ -49,16 +50,29 @@ def callback(message):
     rospy.loginfo(rospy.get_caller_id() + ' I heard %s', message.data)
     OutputString = message.data.split()
 
-    # save massage as a csv format
-    FilePath = '/root/HSR/catkin_ws/src/spco_library/rgiro_spco2_slam/data/output/test/tmp/Otb.csv'
+    # save massage as a csv format and csvfile for auto retry
+    FilePath = '/root/HSR/catkin_ws/src/spco2_mlda/rgiro_spco2_slam/data/output/test/tmp/Otb.csv'
     with open(FilePath, 'a') as f:
         writer = csv.writer(f)
         writer.writerow(OutputString)
+    
+    FilePath =  '/root/HSR/catkin_ws/src/spco2_mlda/rgiro_spco2_slam/data/output/test/tmp/auto_teaching.csv'
+    listener = tf.TransformListener()
+    listener.waitForTransform("map", "base_link", rospy.Time(), rospy.Duration(4.0))
+    now=rospy.Time.now()
+    listener.waitForTransform("map", "base_link", now, rospy.Duration(4.0))
+    position, quaternion = listener.lookupTransform("map", "base_link", now)
+    #print "position&quauternion",position, quaternion
+    with open(FilePath, 'a') as teachinglistfile:
+        writer = csv.writer(teachinglistfile)
+        writer.writerow([position[0],position[1],quaternion[2],quaternion[3],1.0,message.data])
+        #writer.writerow("[({0},{1},0.0),(0.0,0.0,{2},{3})],".format(position[0],position[1],quaternion[2],quaternion[3]))
+    
 
     # request image feature
     service_result = False
     step = sum([1 for _ in open(FilePath)])
-    print ("step=",step)
+    print("step=", step)
 
     rospy.wait_for_service('rgiro_spco2_slam/image')
     srv = rospy.ServiceProxy('rgiro_spco2_slam/image', spco_data_image)

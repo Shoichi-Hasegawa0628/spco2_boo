@@ -2,6 +2,9 @@
 #This file for setting parameters
 #Akira Taniguchi 2017/01/18-2018/02/11-2018/12/22- 
 import numpy as np
+import roslib.packages
+import os
+
 
 ####################Parameters####################
 R = 30               #The number of particles in spatial concept learning (Same to value in run_gmapping.sh)
@@ -20,25 +23,18 @@ V0 = np.eye(dimx)*2  #Hyperparameter in Inverse Wishart distribution P(Σ) (prio
 n0 = 3.0             #Hyperparameter in Inverse Wishart distribution P(Σ) {>the number of dimenssions] (Influence degree of prior distribution of Σ)
 k0m0m0 = k0*np.dot(np.array([m0]).T,np.array([m0]))
 
-
-#Parameters of latticelm (Please see web page of latticelm)
-knownn = 3#2           #n-gram length for langage model (word n-gram: 3)
-unkn   = 3#2           #n-gram length for spelling model (unknown word n-gram: 3)
-annealsteps  = 10#3    #焼き鈍し法のステップ数 (3)
-anneallength = 15#5    #各焼き鈍しステップのイタレーション数 (5)
-burnin   = 100 #10     #burn-inのイタレーション数 (20)
-samps    = 100 #10     #サンプルの回数 (100)
-samprate = 100 #10     #サンプルの間隔 (1, つまり全てのイタレーション)
-ramdoman = 0 #5        #焼きなましパラメータをランダムにする (0:しない、0以外：最大値：各パラメータ値＋randoman) 
-
 #SpCoSLAM 2.0 追加要素
 wic = 1             #1:wic重みつき、0:wic重みなし
 LAG = 10            #固定ラグ活性化のラグ値(it,ct) (LAG>=1; SpCoSLAM1.0:1)
 LMLAG = 10          #LAG #固定ラグ活性化のラグ値(St) (LMLAG>=1), 固定ラグ活性化しない (LMLAG==0) 
 tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１) 、ラグ値前の言語モデルで音声認識 (0) 
-LMtype = "lattice"  #latticelm:"lattice", lattice→learn→NPYLM:lattice_learn_NPYLM
+
+#LMtype = "lattice"  #latticelm:"lattice", lattice→learn→NPYLM:lattice_learn_NPYLM
 LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
+#SpCoSLAM-MLDA 追加要素
+lamb = 0.1
+#object_path = "/root/HSR/catkin_ws/src/spco2_mlda/rgiro_spco/z_frequency.csv"
 
 ####################Option setting (NOT USE)####################
 UseFT = 1       #画像特徴を使う場合 (１) 、使わない場合 (０) 
@@ -65,66 +61,12 @@ elif CNNmode == 5:
   Descriptor = "CNN_Place365"
   DimImg = 365  #Dimension of image feature
 
-#Julius parameters
-#Julius folderのsyllable.jconf参照
-JuliusVer = "v4.4" #"v.4.3.1" #
-HMMtype = "DNN"  #"GMM"
-lattice_weight = "AMavg"  #"exp" #Acoustic likelihood (log likelihood: "AMavg", likelihood: "exp")
-wight_scale = -1.0
-WDs = "0"   #DNN版の単語辞書の音素を*_Sだけにする ("S") , BIE or Sにする ("S"以外) 
-
-if (JuliusVer ==  "v4.4"):
-  Juliusfolder = "/home/akira/Dropbox/Julius/dictation-kit-v4.4/"
-else:
-  Juliusfolder = "/home/akira/Dropbox/Julius/dictation-kit-v4.3.1-linux/"
-
-if (HMMtype == "DNN"):
-  lang_init = 'syllableDNN.htkdic' 
-else:
-  lang_init = 'web.000.htkdic' # 'trueword_syllable.htkdic' #'phonemes.htkdic' # Init dictionary (in ./lang_m/) 
-#lang_init_DNN = 'syllableDNN.htkdic' #なごり
-
-#multiCPU for latticelm (a number of CPU)
-multiCPU = 1 #2  #max(int(multiprocessing.cpu_count()/2)-1,2) )
-
-##rosbag data playing speed (normal = 1.0)
-rosbagSpeed = 1.0 #0.5#2
-
-#latticelm or NPYLM (run SpCoSLAM_NPYLM.sh)
-#latticeLM = 1     #latticelm(1), NPYLM(0)
-NbestNum = 10 #The number of N of N-best (n<=10) 
-
 ####################Setting File PATH####################
 #Setting of PATH for output folder
 #パスはUbuntu使用時とWin使用時で変更する必要がある。特にUbuntuで動かすときは絶対パスになっているか要確認。
 #win:相対パス、ubuntu:絶対パス
-datafolder   = "/root/HSR/catkin_ws/src/spco_library/rgiro_spco2_slam/data/output/"        #PATH of data out put folder
-
-speech_folder = "/home/akira/Dropbox/Julius/directory/SpCoSLAM/*.wav" #*.wav" #音声の教示データフォルダ(Ubuntu full path)
-speech_folder_go = "/home/akira/Dropbox/Julius/directory/SpCoSLAMgo/*.wav" #*.wav" #評価用の音声データフォルダ(Ubuntu full path)
-lmfolder = "/home/akira/Dropbox/SpCoSLAM/learning/lang_m/"
-
-#Folder of training data set (rosbag file)
-datasetfolder = "/root/HSR/catkin_ws/src/spco_library/rgiro_spco2_slam/data/rosbag/"   #training data set folder
-dataset1      = "albert-b-laser-vision/albert-B-laser-vision-dataset/"
-bag1          = "albertBimg.bag"  #Name of rosbag file
-datasets      = [dataset1] #[dataset1,dataset2]
-bags          = [bag1] #run_rosbag.pyにて使用
-scantopic     = ["scan"] #, "base_scan _odom_frame:=odom_combined"]
-
-#dataset2      = "MIT_Stata_Center_Data_Set/"   ##用意できてない
-#datasets      = {"albert":dataset1,"MIT":dataset2}
-#CNNfolder     = "/home/*/CNN/CNN_Places365/"                        #Folder of CNN model files
-
-#True data files for evaluation (評価用正解データファイル)
-correct_Ct = 'Ct_correct.csv'          #データごとの正解のCt番号
-correct_It = 'It_correct.csv'          #データごとの正解のIt番号
-correct_data = 'SpCoSLAM_human.csv'    #データごとの正解の文章 (単語列、区切り文字つき) (./data/)
-correct_data_SEG = 'SpCoSLAM_SEG.csv'  #データごとの正解の文章 (単語列、区切り文字つき) (./data/)
-correct_name = 'name_correct.csv'      #データごとの正解の場所の名前 (音素列) 
-
-N_best_number = 10  # The number of N of N-best for PRR evaluation (PRR評価用のN-bestのN)
-margin = 10*0.05    # margin value for place area in gird map (0.05m/grid)*margin(grid)=0.05*margin(m)
+datafolder   = "/root/HSR/catkin_ws/src/spco2_mlda/rgiro_spco2_slam/data/output/"        #PATH of data out put folder
+OBJECT_CATEGORY_PATH = str(roslib.packages.get_pkg_dir("spco2_mlda")) + "/data/pre_learning/co_frequency/"
 
 ####################Particle Class (structure)####################
 class Particle:
@@ -135,3 +77,53 @@ class Particle:
     self.theta = theta
     self.weight = weight
     self.pid = pid
+
+
+
+SPCO_PARAM_PATH = str(roslib.packages.get_pkg_dir("rgiro_spco2_slam")) + "/data/output/test/max_likelihood_param/"
+MLDA_PARAM_PATH = str(roslib.packages.get_pkg_dir("mlda")) + "/data/"
+
+CODE_BOOK_SIZE = 50
+ITERATION = 100
+CATEGORYNUM = 3
+ALPHA = 1.0
+BETA = 1.0
+
+LEARN_RESULT_FOLDER = "/root/HSR/catkin_ws/src/spco2_mlda/mlda/mlda/data/learn_result"
+ESTIMATE_RESULT_FOLDER = "/root/HSR/catkin_ws/src/spco2_mlda/mlda/mlda/data/estimate_result"
+PROCESSING_DATA_FOLDER = "/root/HSR/catkin_ws/src/spco2_mlda/mlda/mlda/data/processing_data"
+LEARNING_DATASET_FOLDER = str(roslib.packages.get_pkg_dir("mlda_dataset_original")) + "/rsj_exp"
+OBJECT_CLASS = os.listdir(LEARNING_DATASET_FOLDER)
+OBJECT_NAME = []
+
+for c in range(len(OBJECT_CLASS)):
+    OBJECT_NAME.append(os.listdir(LEARNING_DATASET_FOLDER + "/" + OBJECT_CLASS[c]))
+
+TEACHING_DATA = "word/teaching_text.txt"
+WORD_DICTIONARY = "word_dic.txt"
+WORD_HIST = "histgram_word.txt"
+IMG_HIST = "histgram_img.txt"
+CODE_BOOK = "codebook.txt"
+
+
+PRE_LEARNING_OBJECT_DATA = str(roslib.packages.get_pkg_dir("spco2_mlda")) + "/data/pre_learning"
+OBJECT_SEARCH_DATA = str(roslib.packages.get_pkg_dir("spco2_mlda")) + "/data/object_search"
+
+PRE_OBSERVATION = PRE_LEARNING_OBJECT_DATA  + "/observation/"
+PRE_RESIZE = PRE_LEARNING_OBJECT_DATA  + "/resize/"
+PRE_CROP = PRE_LEARNING_OBJECT_DATA  + "/crop/"
+PRE_YOLO = PRE_LEARNING_OBJECT_DATA + "/yolo/"
+PRE_CROP_YOLO = PRE_LEARNING_OBJECT_DATA + "/crop_yolo/"
+
+SEARCH_OBSERVATION = OBJECT_SEARCH_DATA  + "/observation/"
+SEARCH_RESIZE = OBJECT_SEARCH_DATA  + "/resize/"
+SEARCH_CROP = OBJECT_SEARCH_DATA  + "/crop/"
+SEARCH_YOLO = OBJECT_SEARCH_DATA + "/yolo/"
+SEARCH_CROP_YOLO = OBJECT_SEARCH_DATA + "/crop_yolo/"
+
+
+
+
+
+
+

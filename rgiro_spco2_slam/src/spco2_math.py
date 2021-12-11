@@ -68,8 +68,8 @@ def log_multivariate_t_distribution(x, mu, Sigma, df):
 # 計算された共分散行列のパラメータが正定値性を満たすか簡易チェック
 def Check_VN(VN):
   if (VN[0][0] <= 0 or VN[1][1] <= 0 ):
-    print ("ERROR!!!! Posterior parameter VN is negative.")
-    print (VN)
+    print("ERROR!!!! Posterior parameter VN is negative.")
+    print(VN)
     VN = V0
   return VN
 
@@ -82,18 +82,18 @@ def PosteriorParameterGIW(k,nk,step,IT,XT,icitems_k0):
       if IT[s] == icitems_k0 : 
         xk = xk + [ np.array([XT[s].x, XT[s].y]) ]
     m_ML = sum(xk) / float(nk) #fsumではダメ
-    print ("K%d n:%d m_ML:%s" % (k,nk,str(m_ML)))
-    
+    print("K%d n:%d m_ML:%s" % (k, nk, str(m_ML)))
+
     ##ハイパーパラメータ更新
     kN = k0 + nk
     mN = ( k0*m0 + nk*m_ML ) / kN  #dim 次元横ベクトル
     nN = n0 + nk
-    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in range(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
+    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in xrange(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
     VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in range(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
     VN = Check_VN(VN)
     
   else:  #データがないとき
-    print ("nk["+str(k)+"]="+str(nk))
+    print("nk[" + str(k) + "]=" + str(nk))
     kN = k0
     mN = m0
     nN = n0
@@ -110,13 +110,13 @@ def PosteriorParameterGIW2(k,nk,step,IT,XT,icitems_k0):
       if IT[s] == icitems_k0 : 
         xk = xk + [ np.array(XT[s]) ]
     m_ML = sum(xk) / float(nk) #fsumではダメ
-    print ("K%d n:%d m_ML:%s" % (k,nk,str(m_ML)))
-    
+    print("K%d n:%d m_ML:%s" % (k, nk, str(m_ML)))
+
     ##ハイパーパラメータ更新
     kN = k0 + nk
     mN = ( k0*m0 + nk*m_ML ) / kN  #dim 次元横ベクトル
     nN = n0 + nk
-    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in range(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
+    #VN = V0 + sum([np.dot(np.array([xk[j]-m_ML]).T,np.array([xk[j]-m_ML])) for j in xrange(nk)]) + (k0*nk/kN)*np.dot(np.array([m_ML-m0]).T,np.array([m_ML-m0])) #旧バージョン
     VN = V0 + sum([np.dot(np.array([xk[j]]).T,np.array([xk[j]])) for j in range(nk)]) + k0m0m0 - kN*np.dot(np.array([mN]).T,np.array([mN]))  #speed up? #NIWを仮定した場合、V0は逆行列にしなくてよい
     VN = Check_VN(VN)
     
