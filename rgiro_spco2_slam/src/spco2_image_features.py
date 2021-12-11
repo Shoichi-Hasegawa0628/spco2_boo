@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import rospy
@@ -65,7 +65,8 @@ class ImageFeatureServer():
     def image_callback(self, image):
 
         try:
-            self.frame = CvBridge().imgmsg_to_cv2(image, "bgr8")
+            #self.frame = CvBridge().imgmsg_to_cv2(image, "bgr8") # Image型の処理
+            self.frame = CvBridge().compressed_imgmsg_to_cv2(image) # CompressedImage型の処理
         except CvBrideError as e:
             print (e)
 
@@ -89,11 +90,11 @@ class ImageFeatureServer():
     def __init__(self):
 
         TRIALNAME = "test"#rospy.get_param('~trial_name')#test
-        IMAGE_TOPIC = "/hsrb/head_rgbd_sensor/rgb/image_raw" #"/camera/rgb/image_raw"#rospy.get_param('~image_topic')#/camera/rgb/image_raw
+        IMAGE_TOPIC = '/hsrb/head_rgbd_sensor/rgb/image_rect_color/compressed' #"/hsrb/head_rgbd_sensor/rgb/image_raw" #"/camera/rgb/image_raw"#rospy.get_param('~image_topic')#/camera/rgb/image_raw
         self.image_save = True #rospy.get_param('~image_save')#true
 
         # subscrib image
-        rospy.Subscriber(IMAGE_TOPIC, Image, self.image_callback, queue_size=1)
+        rospy.Subscriber(IMAGE_TOPIC, CompressedImage, self.image_callback, queue_size=1)
         if self.load_network_model()==False:
             print ("error")
 
