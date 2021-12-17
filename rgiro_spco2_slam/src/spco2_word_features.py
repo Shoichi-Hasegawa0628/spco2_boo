@@ -43,7 +43,7 @@ import csv
 import time
 import tf
 
-from rgiro_spco2_slam.srv import spco_data_image
+from rgiro_spco2_slam.srv import spco_data_image, spco_data_object
 
 
 def callback(message):
@@ -51,12 +51,12 @@ def callback(message):
     OutputString = message.data.split()
 
     # save massage as a csv format and csvfile for auto retry
-    FilePath = '/root/HSR/catkin_ws/src/spco2_mlda/rgiro_spco2_slam/data/output/test/tmp/Otb.csv'
+    FilePath = '/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/tmp/Otb.csv'
     with open(FilePath, 'a') as f:
         writer = csv.writer(f)
         writer.writerow(OutputString)
     
-    FilePath =  '/root/HSR/catkin_ws/src/spco2_mlda/rgiro_spco2_slam/data/output/test/tmp/auto_teaching.csv'
+    FilePath =  '/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/tmp/auto_teaching.csv'
     listener = tf.TransformListener()
     listener.waitForTransform("map", "base_link", rospy.Time(), rospy.Duration(4.0))
     now=rospy.Time.now()
@@ -80,6 +80,20 @@ def callback(message):
         service_result = srv("new", step)
     except rospy.ServiceException as exc:
         print("Service did not process request: " + str(exc))
+
+
+    # request object feature
+    service_result = False
+    step = sum([1 for _ in open(FilePath)])
+    print("step=", step)
+
+    rospy.wait_for_service('rgiro_spco2_slam/object')
+    srv = rospy.ServiceProxy('rgiro_spco2_slam/object', spco_data_object)
+    try:
+        service_result = srv("new", step)
+    except rospy.ServiceException as exc:
+        print("Service did not process request: " + str(exc))
+
 
     ## Publish messeage for start SpCo leaning.
     pub = rospy.Publisher('start_learning', std_msgs.msg.String, queue_size=10, latch=True)

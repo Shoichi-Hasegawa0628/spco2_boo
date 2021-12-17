@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   spco_data_image.srv
+  spco_data_object.srv
  )
 
  generate_messages(
