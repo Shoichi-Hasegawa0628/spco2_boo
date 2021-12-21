@@ -31,7 +31,7 @@ You can do it like this below image.
 
 ## Execution Procedure
 1  `cd HSR/catkin_ws/src`  
-2. `git clone https://github.com/Shoichi-Hasegawa0628/spco2_boo.git`
+2. `git clone https://github.com/Shoichi-Hasegawa0628/spco2_boo.git`  
 3. `cd ~/HSR/ && bash ./RUN-DOCKER-CONTAINER.bash`  
 4. `cd catkin_ws`  
 5. `catkin_make`   
