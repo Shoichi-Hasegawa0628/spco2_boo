@@ -37,7 +37,7 @@ You can do it like this below image.
 5. `catkin_make`   
 6. Launch Gazebo  
 7. Launch Rviz  
-8. Launch YOLOv5
+8. Launch YOLOv5  
 9. `rosnode kill /pose_integrator`   
 10. `roscd rgiro_spco2_slam`  
 11. `cd bash`  
