@@ -109,8 +109,8 @@ import sys
 import os.path
 import time
 import shutil
-import sys
-import roslib.packages
+#import sys
+#import roslib.packages
 
 """
 # Reading data for MLDA topic frequency, 一行づつcsvデータを読み込んでリスト型に格納していく関数
@@ -132,17 +132,17 @@ def ReadObjectTopic(object_path):
 
 
 def ReadObjectData(trialname, step):
-    FilePath = datafolder + trialname + "/temp_boo/" + str(step) + "_Object_BOO.csv"
-    with open(FilePath, 'r') as f:
+    with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_W_list.csv", 'r') as f:
         reader = csv.reader(f)
+        Object_W_list = [row for row in reader]
+        print(Object_W_list[0])
+
+    with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r') as f:
+        reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
         OT = [row for row in reader]
         print(OT)
 
-    with open(FilePath, 'r') as f:
-        reader = csv.reader(f)
-        Object_W_list = [row for row in reader]
-        print(Object_W_list)
-    return OT, Object_W_list
+    return OT, Object_W_list[0]
 
 
 # Reading data for image feature (NOT USE)
@@ -160,7 +160,7 @@ def ReadImageData(trialname, step):
 def ReadWordData(step, trialname, particle):
     N = 0
     Otb = []
-    Otb_FilePath = '/root/HSR/catkin_ws/src/spco2_mlda/rgiro_spco2_slam/data/output/test/tmp/Otb.csv'
+    Otb_FilePath = '/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/tmp/Otb.csv'
     ######################################################
     # 固定ラグ活性化の場合の処理
     if (LMLAG != 0):
@@ -477,15 +477,12 @@ def SaveParameters(filename, particle, phi, pi, W, theta, Xi, mu, sig):
 
 
 def SaveMaxLikelihoodParams(filename, max_likelihood_datafile, max_index):
-    if len(os.listdir(max_likelihood_datafile)) != 0:
-        shutil.rmtree(max_likelihood_datafile)
-        os.mkdir(max_likelihood_datafile)
-        print("Deleted!!!!\n")
-
-    params_list = ["/phi", "/pi", "/W", "/theta", "/Xi", "/mu", "/sig", "/index", "W_list"]
+    if not os.path.exists(max_likelihood_datafile):
+        os.makedirs(max_likelihood_datafile)
+    params_list = ["phi", "pi", "W", "theta", "Xi", "mu", "sig", "index", "W_list"]
     for i in range(len(params_list)):
-        shutil.copyfile(filename + "{}".format((params_list[i])) + str(max_index) + ".csv",
-                        max_likelihood_datafile + "{}".format(params_list[i]) + ".csv")
+        shutil.copyfile(filename + "/{}".format((params_list[i])) + str(max_index) + ".csv",
+                        max_likelihood_datafile + "/{}".format(params_list[i]) + ".csv")
 
     # shutil.copyfile(filename + "/phi" + str(max_index) + ".csv", max_likelihood_datafile + "/phi" + ".csv")
     # shutil.copyfile(filename + "/pi" + str(max_index) + ".csv", max_likelihood_datafile + "/pi" + ".csv")
@@ -637,6 +634,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         Ft_prob = np.array([1.0 for c in range(L + 1)])
         Ot_prob = np.array([1.0 for c in range(L + 1)])  # 物体概念の頻度情報
         Bt = sum(ST[cstep])  # 発話文中の単語数
+        At = sum(OT[cstep])
 
         # 位置分布kの計算と場所概念cの計算を分ける(重複計算を防ぐ)
         for l in range(L + 1):
@@ -660,8 +658,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
             else:  # ct=lかつit=kのデータがない場合
                 St_prob[l] = 1.0 / (G ** Bt)
                 Ft_prob[l] = 1.0 / E  ##画像特徴は全次元足して１になるのでこれで良い
-                Ot_prob[l] = 1.0 / (D ** 0)
-
+                Ot_prob[l] = 1.0 / (D ** At)
+####################################
             # temp2[l] = temp2[l] * St_prob[l] * Ft_prob[l]
 
         temp2 = (temp22.T * St_prob * Ft_prob * Ot_prob).T
@@ -813,6 +811,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                     Ft_prob = np.array([1.0 for c in range(L + 1)])
                     Ot_prob = np.array([1.0 for c in range(L + 1)])  # 物体概念の頻度情報
                     Bt = sum(ST[tau])  # 発話文中の単語数
+                    At = sum(OT[tau])
 
                     # 位置分布kの計算と場所概念cの計算を分ける(重複計算を防ぐ)
                     for l in range(L + 1):
@@ -829,15 +828,15 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                             Ft_prob[l] = np.exp(sum(np.array(theta_temp_log) * np.array(FT[tau])))  # .prod() #要素積
 
                             ##物体概念の頻度情報のカウント数の計算
-                            Nld = sum([np.array(OT[s]) * (CT[s] == ccitems[l][0]) for s in range(step - 1)])  # sumだとできる
+                            Nld = sum([np.array(OT[s]) * (CT[s] == ccitems[l][0]) for s in range(step)])  # sumだとできる
                             Xi_temp_log = np.log(np.array(Nld) + lamb) - np.log(sum(Nld) + D * lamb)
                             Ot_prob[l] = np.exp(sum(np.array(Xi_temp_log) * np.array(OT[tau])))  # .prod() #要素積
 
                         else:  # ct=lかつit=kのデータがない場合
                             St_prob[l] = 1.0 / (G ** Bt)
                             Ft_prob[l] = 1.0 / E  ##画像特徴は全次元足して１になるのでこれで良い
-                            Ot_prob[l] = 1.0 / (D ** 0)
-
+                            Ot_prob[l] = 1.0 / (D ** At)
+###########################################
                         # temp2[l] = temp2[l] * St_prob[l] * Ft_prob[l]
                     temp2 = (temp22.T * St_prob * Ft_prob * Ot_prob).T
                     print(temp2)
@@ -1034,6 +1033,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         ########  ↑File Output of Learning Result↑  ########
     # print "--------------------"
     print(u"- <COMPLETED> Learning of Spatial Concepts in Particle:" + str(particle) + " -")
+    print("Xi : {}".format(Xi))
     # print "--------------------"
     return ct, it, weight_log, WS_log
 

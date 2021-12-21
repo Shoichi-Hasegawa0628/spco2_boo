@@ -31,17 +31,18 @@ class ObjectFeatureServer():
         rospy.loginfo("[Service spco_data/object] Ready")
 
     def object_server(self, req):
-        trialname = rospy.get_param('~trial_name')
+        trialname = "test"
         if (os.path.exists(datafolder + trialname + "/tmp_boo/Object.csv") == True):
             with open(datafolder + trialname + "/tmp_boo/Object.csv", 'r') as f:
                 reader = csv.reader(f)
                 self.object_list = [row for row in reader]
-            print("object_list: {}".format(self.object_list))
+            print("pre_object_list: {}\n".format(self.object_list))
 
         bb = rospy.wait_for_message('/yolov5_ros/output/bounding_boxes', BoundingBoxes, timeout=15)
         self.detect_object_info = bb.bounding_boxes
+        # print(self.detect_object_info)
         if len(self.detect_object_info) == 0:
-            if req.step == 0:
+            if req.step == 1:
                 # 最初の教示で物体が検出されなかったとき
                 self.object_list = []
                 self.dictionary = []
@@ -74,7 +75,9 @@ class ObjectFeatureServer():
         object_list = []
         for i in range(len(self.detect_object_info)):
             object_list.append(self.detect_object_info[i].Class)
-            self.object_list.append(object_list)
+            print(object_list)
+        self.object_list.append(object_list)
+        print(self.object_list)
         return
 
     def make_object_dic(self):
@@ -85,12 +88,15 @@ class ObjectFeatureServer():
         return
 
     def make_object_boo(self):
+        # print(self.object_list)
         self.Object_BOO = [[0 for i in range(len(self.dictionary))] for n in range(len(self.object_list))]
+        # print(self.Object_BOO)
         for n in range(len(self.object_list)):
             for j in range(len(self.object_list[n])):
                 for i in range(len(self.dictionary)):
                     if self.dictionary[i] == self.object_list[n][j]:
                         self.Object_BOO[n][i] = self.Object_BOO[n][i] + 1
+        # print(self.Object_BOO)
         return
 
     def taking_single_image(self, trialname, step):
@@ -103,9 +109,17 @@ class ObjectFeatureServer():
     def save_data(self, trialname, step):
         # 全時刻の観測された物体のリストを保存
         FilePath = datafolder + trialname + "/tmp_boo/Object.csv"
-        with open(FilePath, 'a') as f:
+        with open(FilePath, 'w') as f:
             writer = csv.writer(f)
             writer.writerows(self.object_list)
+        # if step == 1:
+        #     with open(FilePath, 'w') as f:
+        #         writer = csv.writer(f)
+        #         writer.writerows(self.object_list)
+        # else:
+        #     with open(FilePath, 'w') as f:
+        #         writer = csv.writer(f)
+        #         writer.writerows(self.object_list)
 
         # 教示ごとに観測された物体のリストを保存
         FilePath = datafolder + trialname + "/tmp_boo/" + str(step) + "_Object.csv"
@@ -120,7 +134,7 @@ class ObjectFeatureServer():
             writer.writerows(self.Object_BOO)
 
         # 教示ごとの物体の辞書を保存
-        FilePath = datafolder + trialname + "/tmp_boo/" + str(step) + "Object_W_list.csv"
+        FilePath = datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_W_list.csv"
         with open(FilePath, 'w') as f:
             writer = csv.writer(f, lineterminator='\n')
             writer.writerow(self.dictionary)

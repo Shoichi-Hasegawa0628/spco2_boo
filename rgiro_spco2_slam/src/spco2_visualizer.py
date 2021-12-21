@@ -42,7 +42,7 @@ iteration = 1
 sample = 0
 
 ##FullPath of folder
-filename = "/root/HSR/catkin_ws/src/spco_library/rgiro_spco2_slam/data/output"
+filename = "/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output"
 #filename = outputfolder_SIG + trialname  # + "/"
 #print filename, iteration, sample
 #outputfile = filename + navigation_folder  # outputfolder + trialname + navigation_folder

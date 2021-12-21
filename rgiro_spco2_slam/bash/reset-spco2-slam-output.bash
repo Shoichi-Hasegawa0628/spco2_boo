@@ -12,4 +12,4 @@ mkdir -p ../data/output/test/particle/
 mkdir -p ../data/output/test/tmp/
 mkdir -p ../data/output/test/weight/
 mkdir -p ../data/output/test/object_image/
-mkdir -p ../data/output/test/temp_boo/
+mkdir -p ../data/output/test/tmp_boo/

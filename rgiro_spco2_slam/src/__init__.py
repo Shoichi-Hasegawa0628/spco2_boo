@@ -33,8 +33,8 @@ tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１
 LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
-lamb = 0.1
-
+# lamb = 0.1
+lamb = 1.0
 ####################Option setting (NOT USE)####################
 UseFT = 1       #画像特徴を使う場合 (１) 、使わない場合 (０) 
 UseLM = 1       #言語モデルを更新する場合 (１) 、しない場合 (０) 
@@ -76,7 +76,7 @@ class Particle:
     self.weight = weight
     self.pid = pid
 
-SPCO_PARAM_PATH = str(roslib.packages.get_pkg_dir("rgiro_spco2_slam")) + "/data/output/test/max_likelihood_param/"
+# SPCO_PARAM_PATH = str(roslib.packages.get_pkg_dir("rgiro_spco2_slam")) + "/data/output/test/max_likelihood_param/"
 
 
 
