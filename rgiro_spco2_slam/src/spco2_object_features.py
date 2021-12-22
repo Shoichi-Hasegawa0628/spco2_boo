@@ -61,6 +61,7 @@ class ObjectFeatureServer():
                 self.save_data(trialname, req.step)
                 return spco_data_objectResponse(True)
 
+        self.save_detection_img(trialname, req.step)
         self.extracting_label()
         self.make_object_dic()
         self.make_object_boo()
@@ -104,6 +105,12 @@ class ObjectFeatureServer():
                                      timeout=None)
         observed_img = self.cv_bridge.compressed_imgmsg_to_cv2(img)
         cv2.imwrite(datafolder + trialname + "/object_image/" + str(step) + ".jpg", observed_img)
+        return
+
+    def save_detection_img(self, trialname, step):
+        img = rospy.wait_for_message('/yolov5_ros/output/image/compressed', CompressedImage, timeout=15)
+        detect_img = self.cv_bridge.compressed_imgmsg_to_cv2(img)
+        cv2.imwrite(datafolder + trialname + "/detect_image/" + str(step) + ".jpg", detect_img)
         return
 
     def save_data(self, trialname, step):
