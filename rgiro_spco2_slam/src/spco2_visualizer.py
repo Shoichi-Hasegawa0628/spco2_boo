@@ -125,7 +125,7 @@ class SpatialConceptsVisualizer():
         # file.sort(key=alphanum_key)
         # for f in file:
         K = 0
-        for line in open(filename + "/" + trialname + '/Myu.csv',
+        for line in open(filename + "/" + trialname + '/mu.csv',
                          'r'):  # .readlines()
             mu = []  # (x,y,sin,cos)
 
@@ -148,7 +148,7 @@ class SpatialConceptsVisualizer():
         # convert = lambda text: int(text) if text.isdigit() else text
         # alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
         # file.sort(key=alphanum_key)
-        for line in open(filename + "/" + trialname + '/S.csv', 'r'):
+        for line in open(filename + "/" + trialname + '/sig.csv', 'r'):
             # sigma=[] #(x,y,sin,cos)
             data = line[:].split(',')
             sigma = [[float(data[0]), float(data[1]), 0, 0], [float(data[2]), float(data[3]), 0, 0], [0, 0, 0, 0],

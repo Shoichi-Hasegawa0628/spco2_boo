@@ -13,12 +13,13 @@ dimx = 2             #The number of dimensions of xt (x,y)
 
 ##Initial (hyper) parameters
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
-alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
+# alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
+alpha0 = 0.09
 gamma0 = 0.1         #Hyperparameter of CRP in multinomial distribution for index of position distribution
 beta0 = 0.1          #Hyperparameter in multinomial distribution P(W) for place names 
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
-# k0 = 1e-3            #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
-k0 = 1.0　# 注意
+# k0 = 1e-3          #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
+k0 = 1.0             #注意
 m0 = np.zeros(dimx)  #Hyperparameter in Gaussina distribution P(μ) (prior mean vector)
 V0 = np.eye(dimx)*2  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix) 
 n0 = 3.0             #Hyperparameter in Inverse Wishart distribution P(Σ) {>the number of dimenssions] (Influence degree of prior distribution of Σ)
