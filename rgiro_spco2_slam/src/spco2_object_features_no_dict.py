@@ -24,6 +24,7 @@ class ObjectFeatureServer():
     def __init__(self):
         self.detect_object_info = []
         self.object_list = []
+        self.dictionary = []
         self.Object_BOO = []
         self.cv_bridge = CvBridge()
         o = rospy.Service('rgiro_spco2_slam/object', spco_data_object, self.object_server)
@@ -40,12 +41,12 @@ class ObjectFeatureServer():
         bb = rospy.wait_for_message('/yolov5_ros/output/bounding_boxes', BoundingBoxes, timeout=15)
         self.detect_object_info = bb.bounding_boxes
         # print(self.detect_object_info)
-
         if len(self.detect_object_info) == 0:
             if req.step == 1:
                 # 最初の教示で物体が検出されなかったとき
                 self.object_list = []
-                self.Object_BOO = [0] * 24
+                self.dictionary = []
+                self.Object_BOO = []
                 self.taking_single_image(trialname, req.step)
                 self.save_data(trialname, req.step)
                 return spco_data_objectResponse(True)
@@ -54,6 +55,7 @@ class ObjectFeatureServer():
                 # 最初の教示以降の教示で物体が検出されなかったとき
                 object_list = []
                 self.object_list.append(object_list)
+                self.make_object_dic()
                 self.make_object_boo()
                 self.taking_single_image(trialname, req.step)
                 self.save_data(trialname, req.step)
@@ -61,11 +63,12 @@ class ObjectFeatureServer():
 
         self.save_detection_img(trialname, req.step)
         self.extracting_label()
+        self.make_object_dic()
         self.make_object_boo()
         self.taking_single_image(trialname, req.step)
         self.save_data(trialname, req.step)
         print("object_list: {}\n".format(self.object_list))
-        print("dictionary: {}\n".format(object_dictionary))
+        print("dictionary: {}\n".format(self.dictionary))
         print("Bag-of-Objects: {}\n".format(self.Object_BOO))
         return spco_data_objectResponse(True)
 
@@ -78,14 +81,21 @@ class ObjectFeatureServer():
         print(self.object_list)
         return
 
+    def make_object_dic(self):
+        for i in range(len(self.object_list)):
+            for j in range(len(self.object_list[i])):
+                if self.object_list[i][j] not in self.dictionary:
+                    self.dictionary.append(self.object_list[i][j])
+        return
+
     def make_object_boo(self):
         # print(self.object_list)
-        self.Object_BOO = [[0 for i in range(len(object_dictionary))] for n in range(len(self.object_list))]
+        self.Object_BOO = [[0 for i in range(len(self.dictionary))] for n in range(len(self.object_list))]
         # print(self.Object_BOO)
         for n in range(len(self.object_list)):
             for j in range(len(self.object_list[n])):
-                for i in range(len(object_dictionary)):
-                    if object_dictionary[i] == self.object_list[n][j]:
+                for i in range(len(self.dictionary)):
+                    if self.dictionary[i] == self.object_list[n][j]:
                         self.Object_BOO[n][i] = self.Object_BOO[n][i] + 1
         # print(self.Object_BOO)
         return
@@ -134,9 +144,7 @@ class ObjectFeatureServer():
         FilePath = datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_W_list.csv"
         with open(FilePath, 'w') as f:
             writer = csv.writer(f, lineterminator='\n')
-            writer.writerow(object_dictionary)
-
-        return
+            writer.writerow(self.dictionary)
 
 
 if __name__ == '__main__':

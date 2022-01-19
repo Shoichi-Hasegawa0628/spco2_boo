@@ -5,7 +5,6 @@ import numpy as np
 import roslib.packages
 import os
 
-
 ####################Parameters####################
 R = 30               #The number of particles in spatial concept learning (Same to value in run_gmapping.sh)
                      #(It's need to set to the same value in launch file of gmapping: no setting=30)
@@ -36,6 +35,12 @@ LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
 lamb = 0.1
+object_dictionary = ["plate", "bowl", "pitcher_base", "banana",
+                      "apple", "orange", "cracker_box", "pudding_box",
+                      "chips_bag", "coffee", "muscat", "fruits_juice",
+                      "pig_doll", "sheep_doll", "penguin_doll", "airplane_toy",
+                      "car_toy", "truck_toy", "tooth_paste", "towel",
+                      "cup", "treatments", "sponge", "bath_slipper"]
 ####################Option setting (NOT USE)####################
 UseFT = 1       #画像特徴を使う場合 (１) 、使わない場合 (０) 
 UseLM = 1       #言語モデルを更新する場合 (１) 、しない場合 (０) 
