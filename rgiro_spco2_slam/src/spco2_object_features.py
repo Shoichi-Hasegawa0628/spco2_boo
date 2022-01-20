@@ -44,8 +44,8 @@ class ObjectFeatureServer():
         if len(self.detect_object_info) == 0:
             if req.step == 1:
                 # 最初の教示で物体が検出されなかったとき
-                self.object_list = []
-                self.Object_BOO = [0] * 24
+                self.object_list = [[]]
+                self.Object_BOO = [[0] * 24]
                 self.taking_single_image(trialname, req.step)
                 self.save_data(trialname, req.step)
                 return spco_data_objectResponse(True)
@@ -109,14 +109,6 @@ class ObjectFeatureServer():
         with open(FilePath, 'w') as f:
             writer = csv.writer(f)
             writer.writerows(self.object_list)
-        # if step == 1:
-        #     with open(FilePath, 'w') as f:
-        #         writer = csv.writer(f)
-        #         writer.writerows(self.object_list)
-        # else:
-        #     with open(FilePath, 'w') as f:
-        #         writer = csv.writer(f)
-        #         writer.writerows(self.object_list)
 
         # 教示ごとに観測された物体のリストを保存
         FilePath = datafolder + trialname + "/tmp_boo/" + str(step) + "_Object.csv"
