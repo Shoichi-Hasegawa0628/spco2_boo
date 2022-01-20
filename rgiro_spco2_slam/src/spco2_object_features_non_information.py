@@ -22,7 +22,7 @@ from rgiro_spco2_slam.srv import spco_data_object, spco_data_objectResponse
 
 class ObjectFeatureServer():
     def __init__(self):
-        self.detect_object_info = []
+        # self.detect_object_info = []
         self.object_list = []
         self.Object_BOO = []
         self.cv_bridge = CvBridge()
@@ -37,46 +37,46 @@ class ObjectFeatureServer():
                 self.object_list = [row for row in reader]
             print("pre_object_list: {}\n".format(self.object_list))
 
-        bb = rospy.wait_for_message('/yolov5_ros/output/bounding_boxes', BoundingBoxes, timeout=15)
-        self.detect_object_info = bb.bounding_boxes
+        # bb = rospy.wait_for_message('/yolov5_ros/output/bounding_boxes', BoundingBoxes, timeout=15)
+        # self.detect_object_info = bb.bounding_boxes
         # print(self.detect_object_info)
 
-        if len(self.detect_object_info) == 0:
-            if req.step == 1:
-                # 最初の教示で物体が検出されなかったとき
-                self.object_list = [[]]
-                self.Object_BOO = [[0] * len(object_dictionary)]
-                self.taking_single_image(trialname, req.step)
-                self.save_data(trialname, req.step)
-                return spco_data_objectResponse(True)
+        # if len(self.detect_object_info) == 0:
+        if req.step == 1:
+            # 最初の教示で物体が検出されなかったとき
+            self.object_list = [[]]
+            self.Object_BOO = [[0] * len(object_dictionary)]
+            self.taking_single_image(trialname, req.step)
+            self.save_data(trialname, req.step)
+            return spco_data_objectResponse(True)
 
-            else:
-                # 最初の教示以降の教示で物体が検出されなかったとき
-                object_list = []
-                self.object_list.append(object_list)
-                self.make_object_boo()
-                self.taking_single_image(trialname, req.step)
-                self.save_data(trialname, req.step)
-                return spco_data_objectResponse(True)
+        else:
+            # 最初の教示以降の教示で物体が検出されなかったとき
+            object_list = []
+            self.object_list.append(object_list)
+            self.make_object_boo()
+            self.taking_single_image(trialname, req.step)
+            self.save_data(trialname, req.step)
+            return spco_data_objectResponse(True)
 
-        self.save_detection_img(trialname, req.step)
-        self.extracting_label()
-        self.make_object_boo()
-        self.taking_single_image(trialname, req.step)
-        self.save_data(trialname, req.step)
-        print("object_list: {}\n".format(self.object_list))
-        print("dictionary: {}\n".format(object_dictionary))
-        print("Bag-of-Objects: {}\n".format(self.Object_BOO))
-        return spco_data_objectResponse(True)
+        # self.save_detection_img(trialname, req.step)
+        # self.extracting_label()
+        # self.make_object_boo()
+        # self.taking_single_image(trialname, req.step)
+        # self.save_data(trialname, req.step)
+        # print("object_list: {}\n".format(self.object_list))
+        # print("dictionary: {}\n".format(object_dictionary))
+        # print("Bag-of-Objects: {}\n".format(self.Object_BOO))
+        # return spco_data_objectResponse(True)
 
-    def extracting_label(self):
-        object_list = []
-        for i in range(len(self.detect_object_info)):
-            object_list.append(self.detect_object_info[i].Class)
-            print(object_list)
-        self.object_list.append(object_list)
-        print(self.object_list)
-        return
+    # def extracting_label(self):
+    #     object_list = []
+    #     for i in range(len(self.detect_object_info)):
+    #         object_list.append(self.detect_object_info[i].Class)
+    #         print(object_list)
+    #     self.object_list.append(object_list)
+    #     print(self.object_list)
+    #     return
 
     def make_object_boo(self):
         # print(self.object_list)
@@ -97,11 +97,11 @@ class ObjectFeatureServer():
         cv2.imwrite(datafolder + trialname + "/object_image/" + str(step) + ".jpg", observed_img)
         return
 
-    def save_detection_img(self, trialname, step):
-        img = rospy.wait_for_message('/yolov5_ros/output/image/compressed', CompressedImage, timeout=15)
-        detect_img = self.cv_bridge.compressed_imgmsg_to_cv2(img)
-        cv2.imwrite(datafolder + trialname + "/detect_image/" + str(step) + ".jpg", detect_img)
-        return
+    # def save_detection_img(self, trialname, step):
+    #     img = rospy.wait_for_message('/yolov5_ros/output/image/compressed', CompressedImage, timeout=15)
+    #     detect_img = self.cv_bridge.compressed_imgmsg_to_cv2(img)
+    #     cv2.imwrite(datafolder + trialname + "/detect_image/" + str(step) + ".jpg", detect_img)
+    #     return
 
     def save_data(self, trialname, step):
         # 全時刻の観測された物体のリストを保存

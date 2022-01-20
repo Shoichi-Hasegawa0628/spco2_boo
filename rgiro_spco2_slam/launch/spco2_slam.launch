@@ -50,4 +50,5 @@
   <!-- <node pkg="rgiro_spco2_slam" name="spco2_word_data" type="spco2_word_data.py" output="screen"/> -->
   <node pkg="rgiro_spco2_slam" name="spco2_image_features" type="spco2_image_features.py" output="screen"/>
   <node pkg="rgiro_spco2_slam" name="spco2_object_features" type="spco2_object_features.py" output="screen"/>
+  <!-- <node pkg="rgiro_spco2_slam" name="spco2_object_features" type="spco2_object_features_non_information.py" output="screen"/> -->
 </launch>
