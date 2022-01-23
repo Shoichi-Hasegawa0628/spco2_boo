@@ -161,7 +161,7 @@ def ReadImageData(trialname, step):
 def ReadWordData(step, trialname, particle):
     N = 0
     Otb = []
-    Otb_FilePath = '/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/tmp/Otb.csv'
+    Otb_FilePath = '/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/tmp/{}/Otb.csv'.format(step)
     ######################################################
     # 固定ラグ活性化の場合の処理
     if (LMLAG != 0):
@@ -289,10 +289,22 @@ def ParticleSearcher(trialname, data):
         exit()
 
     # 教示された時刻のみのデータにする
-    steplist = m_count2step(trialname, m_count, data + 1)
+    # if data == 0:
+    #     steplist = [[1, 1]]
+    #     step = len(steplist)
+    #     print("step: {}".format(step))
+    #
+    # else:
+    #     steplist = m_count2step(trialname, m_count, data + 1)
+    #     step = len(steplist)
+    #     print("step: {}".format(step))
+    #     # print steplist
+
+    steplist = m_count2step(trialname, m_count)
     step = len(steplist)
     print("step: {}".format(step))
     # print steplist
+
 
     # C[1:t-1],I[1:t-1]のパーティクルID(step-1時点)と現在のparticleIDの対応付け
     CTtemp = [[] for r in range(R)]
@@ -352,7 +364,7 @@ def ParticleSearcher(trialname, data):
 
 
 # gmappingの時刻カウント数 (m_count) と教示時刻のステップ数 (step) を対応付ける
-def m_count2step(trialname, m_count, data):
+def m_count2step(trialname, m_count):
     list = []  # [ [m_count, step], ... ]
     step = 1
     csvname = datafolder + trialname + "/m_count2step.csv"
@@ -366,19 +378,20 @@ def m_count2step(trialname, m_count, data):
             itemList = line[:-1].split(',')
             # print itemList
             list.append([int(itemList[0]), int(itemList[1])])
-            if data == step:
-                break
+            #if data == step:
+            #    break
             step += 1
 
     print(list)
     print(step)
+
     # Update m_count2step.csv
-    # if (step == len(list) + 1) or (step == 1 and len(list) == 1):  # テスト用の実行で同じm_countのデータカウントが増えないように
-    #     fp = open(csvname, 'a')
-    #     fp.write(str(m_count) + "," + str(step))
-    #     fp.write('\n')
-    #     fp.close()
-    #     list.append([m_count, step])
+    if (step == len(list) + 1) or (step == 1 and len(list) == 1):  # テスト用の実行で同じm_countのデータカウントが増えないように
+        fp = open(csvname, 'a')
+        fp.write(str(m_count) + "," + str(step))
+        fp.write('\n')
+        fp.close()
+        list.append([m_count, step])
 
     return list
 
@@ -1049,7 +1062,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    for data in range(80):
+    for data in range(40): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
         trialname = "test"
@@ -1062,11 +1075,11 @@ def callback():
         # m_count:counter of gmapping step
         # Ct:spatial_concept_index of privious teaching
         # It:position_distributions_index of privious teaching
-        Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data)
+        Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+80)
         for i in range(R):  # この例外処理はなんのためにある？
             while (0 in CT[i]) or (0 in IT[i]):
                 print("Error! 0 in CT,IT", CT, IT)
-                Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data)
+                Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+80)
 
         print("step", step)
         print("m_count", m_count)
