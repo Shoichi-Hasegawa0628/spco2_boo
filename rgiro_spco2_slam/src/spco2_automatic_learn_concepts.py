@@ -515,6 +515,25 @@ def SaveMaxLikelihoodParams(filename, max_likelihood_datafile, max_index):
     # shutil.copyfile(filename + "/index" + str(max_index) + ".csv", max_likelihood_datafile + "/index" + ".csv")
     # shutil.copyfile(filename + "/W_list" + str(max_index) + ".csv", max_likelihood_datafile + "/W_list" + ".csv")
 
+def debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo):
+    FilePath = "/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/debug/" + str(particle)
+    if not os.path.exists(FilePath):
+        os.makedirs(FilePath)
+    with open(FilePath + "/debug_likelihood.txt", "w") as f:
+        f.write("Result of likelihood:\n")
+        f.write("particle_number = {}\n".format(particle))
+        f.write("wz_log = {}\n".format(wz_log))
+        f.write("wf_log = {}\n".format(wf_log))
+        f.write("ws_log = {}\n".format(ws_log))
+        f.write("wo_log = {}\n".format(wo_log))
+        f.write("wic_log = {}\n".format(wic_log))
+        f.write("weight_log = {}\n".format(weight_log))
+        f.write("Ot_prob = {}\n".format(Ot_prob))
+        f.write("CRP_CT = {}\n".format(CRP_CT))
+        f.write("wo = {}\n".format(wo))
+        f.close()
+
+
 
 # Online Learning for Spatial Concepts of one particle
 def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_list):
@@ -1006,7 +1025,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         # P((C^o)t | (C^o){1:t-1}, (C^s){1:t-1}, α, λ)の計算 (SpCoSLAM-MLDA用)
         wo = np.sum(Ot_prob * CRP_CT)  # sum( [Ot_prob[c] * CRP_CT[c] for c in xrange(L+1)] )
         wo_log = np.log(wo)
-        # print wf, wf_log
+        # print wf, wf_logCRP_CT
 
         ##############################################################
         # P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β)の計算
@@ -1039,6 +1058,11 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
             weight_log += wic_log
             print("wic_log:", wic_log)
         print(wz_log, wf_log, ws_log, wo_log, weight_log, np.exp(weight_log))
+
+        ####### デバッグ
+        if (step == 82 and (particle == 14 or particle == 28 or particle == 29)):
+            debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo)
+
         # print weight_log, np.exp(weight_log)
 
     ########################################################################
@@ -1062,7 +1086,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    for data in range(40): # 追加学習するときは、この値を追加するデータ分だけ入れる。
+    for data in range(4): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
         trialname = "test"
@@ -1075,11 +1099,11 @@ def callback():
         # m_count:counter of gmapping step
         # Ct:spatial_concept_index of privious teaching
         # It:position_distributions_index of privious teaching
-        Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+80)
+        Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+84)
         for i in range(R):  # この例外処理はなんのためにある？
             while (0 in CT[i]) or (0 in IT[i]):
                 print("Error! 0 in CT,IT", CT, IT)
-                Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+80)
+                Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+84)
 
         print("step", step)
         print("m_count", m_count)
