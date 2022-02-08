@@ -157,6 +157,27 @@ def ReadImageData(trialname, step):
     return FT
 
 
+# 位置情報の読み込み For SIGVerse
+def ReadPositionData_SIGVerse(step):
+    XT = []
+    i = 0
+    for line in open('/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/position_exp.csv', 'r'):
+        if (i < step):
+            itemList = line[:].split(',')
+            # XT.append( (float(itemList[0]), float(itemList[1])) )
+            XT.append(Particle(int(i), float(itemList[0]), float(itemList[1]), float(0), float(1.0 / R), int(0)))
+        i += 1
+
+    if (step != len(XT)):
+        print("ERROR XT", step, len(XT))
+    # X_To = [ [Particle( int(0), float(1), float(2), float(3), float(4), int(5) ) for c in xrange(step)] for i in xrange(R) ]
+    else:
+        print("READ XT", step)
+    # print XT
+    return XT
+
+
+
 # Reading word data and Making word list
 def ReadWordData(step, trialname, particle):
     N = 0
@@ -410,6 +431,65 @@ def WriteParticleData(filename, step, particle, Xp, p_weight, ct, it, CT, IT):
         Xp[cstep].theta) + "," + str(p_weight) + "," + str(Xp[cstep].pid) + "," + str(ct) + "," + str(it))
     fp.write('\n')
 
+#########################################################################
+#パーティクル情報の保存 For SIGVerse
+def WriteParticleData_SIGVerse(filename, step, particles_NEW):
+  #cstep = step - 1
+  #ID,x,y,theta,weight,pID,Ct,it
+  fp1 = open( filename + "/particles_NEW_CT.csv", 'w')
+  fp2 = open( filename + "/particles_NEW_IT.csv", 'w')
+  for r in range(R):
+    for s in range(step):
+        fp1.write( str(particles_NEW[r][0][s]) )
+        fp2.write( str(particles_NEW[r][1][s]) )
+        if (s != step-1):
+          fp1.write( ',' )
+          fp2.write( ',' )
+    fp1.write('\n')
+    fp2.write('\n')
+    #fp.write( str(cstep) + "," + str(Xp[cstep].id) + "," + str(Xp[cstep].x) + "," + str(Xp[cstep].y) + "," + str(Xp[cstep].theta) + "," + str(p_weight) + "," + str(Xp[cstep].pid) + "," + str(ct) + "," + str(it) )
+#########################################################################
+
+
+#パーティクル情報の読み込み For SIGVerse
+def ReadParticleData_SIGVerse(trialname, step):
+  #CT,IT = [],[]
+  CT = [ [0 for s in range(step-1)] for i in range(R) ]
+  IT = [ [0 for s in range(step-1)] for i in range(R) ]
+  #cstep = step - 1
+  if (step != 1):
+    #ID,x,y,theta,weight,pID,Ct,it
+    r = 0
+    for line in open( datafolder + trialname + "/" + str(step-1) + "/particles_NEW_CT.csv", 'r'):
+        itemList = line[:-1].split(',')
+        for i in range(len(itemList)):
+          #CT.append( int(itemList[i]) )
+          CT[r][i] = int(itemList[i])
+        r += 1
+    r = 0
+    for line in open( datafolder + trialname + "/" + str(step-1) + "/particles_NEW_IT.csv", 'r'):
+        itemList = line[:-1].split(',')
+        for i in range(len(itemList)):
+          #IT.append( int(itemList[i]) )
+          IT[r][i] = int(itemList[i])
+        r += 1
+  #elif (step == 1):
+  #  CT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
+  #  IT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
+  #  print "Initialize CT:",CT,"IT:",IT
+  print("CT:",CT)
+  print("IT:",IT)
+  return CT,IT
+
+  #for r in range(R):
+  #  for s in xrange(step):
+  #      #fp1.write( str(particles_NEW[r][0][s]) + ',' )
+  #      #fp2.write( str(particles_NEW[r][1][s]) + ',' )
+  #  #fp1.write('\n')
+  #  #fp2.write('\n')
+#########################################################################
+
+
 
 # パーティクルごとに単語情報を保存
 def WriteWordData(filename, particle, W_list_i):
@@ -541,7 +621,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
     #  St:Bag of word representation of every teaching sentence.
     #  W_list[i]:word dictionary for particle(i).
     #  ST_seq[i]:plain text of every teaching sentence
-    XT_list = [np.array([XT[s].x, XT[s].y]) for s in range(step)]
+    # XT_list = [np.array([XT[s].x, XT[s].y]) for s in range(step)]
     np.random.seed()
     ########################################################################
     ####                   　    ↓Learning phase↓                       ####
@@ -584,8 +664,9 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         # time.sleep(30)
 
         # nk = 1
+        kN, mN, nN, VN = PosteriorParameterGIW(1, 1, 1, [0], [XT[0]], 0)
         # kN,mN,nN,VN = PosteriorParameterGIW2(1,1,1,[0],XT_list[0],0)
-        kN, mN, nN, VN = PosteriorParameterGIW2(1, 1, 1, [0], XT_list, 0)
+        # kN, mN, nN, VN = PosteriorParameterGIW2(1, 1, 1, [0], XT_list, 0)
 
         MU = [mN]
         SIG = [np.array(VN) / (nN - dimx - 1)]
@@ -638,7 +719,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         # CRP_ITC = np.array( [np.array([icclist2[c][i] for i in xrange(K)] + [gamma0]) / (cclist[c] + gamma0) for c in xrange(L)] + [np.array([0.0 for i in xrange(K)] + [1.0])] )
 
         # print Xp
-        xt = XT_list[cstep]  # np.array([XT[cstep].x, XT[cstep].y])
+        # xt = XT_list[cstep]  # np.array([XT[cstep].x, XT[cstep].y])
+        xt = np.array([XT[cstep].x, XT[cstep].y])
         tpdf = np.array([1.0 for i in range(K + 1)])
 
         for k in range(K + 1):
@@ -646,10 +728,12 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
             # 事後t分布用のパラメータ計算
             if (k == K):  # k is newの場合
                 nk = 0
-                kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step - 1, IT, XT_list, 0)
+                # kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step - 1, IT, XT_list, 0)
+                kN, mN, nN, VN = PosteriorParameterGIW(k, nk, step - 1, IT, XT, 0)
             else:
                 nk = ic[icitems[k][0]]  # icitems[k][1]
-                kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step - 1, IT, XT_list, icitems[k][0])
+                # kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step - 1, IT, XT_list, icitems[k][0])
+                kN, mN, nN, VN = PosteriorParameterGIW(k, nk, step - 1, IT, XT, icitems[k][0])
 
             # t分布の事後パラメータ計算
             mk = mN
@@ -815,7 +899,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                             gamma0]) / (cclist[c] + gamma0) for c in range(L)] + [
                                            np.array([0.0 for i in range(K)] + [1.0])])
 
-                    xt = XT_list[tau]  # np.array([XT[tau].x, XT[tau].y])
+                    xt = np.array([XT[tau].x, XT[tau].y])
+                    # xt = XT_list[tau]  # np.array([XT[tau].x, XT[tau].y])
                     tpdf = np.array([1.0 for i in range(K + 1)])
 
                     for k in range(K + 1):
@@ -823,10 +908,12 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                         # 事後t分布用のパラメータ計算
                         if (k == K):  # k is newの場合
                             nk = 0
-                            kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step, IT, XT_list, 0)
+                            # kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step, IT, XT_list, 0)
+                            kN, mN, nN, VN = PosteriorParameterGIW(k, nk, step, IT, XT, 0)
                         else:
                             nk = ic[icitems[k][0]]  # icitems[k][1]
-                            kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step, IT, XT_list, icitems[k][0])
+                            kN, mN, nN, VN = PosteriorParameterGIW(k, nk, step, IT, XT, icitems[k][0])
+                            # kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step, IT, XT_list, icitems[k][0])
 
                         # t分布の事後パラメータ計算
                         mk = mN
@@ -985,7 +1072,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
             #  #print icitems[k][0], ic[icitems[k][0]]
             # print k,nk
 
-            kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step, IT, XT_list, icitems[k][0])
+            # kN, mN, nN, VN = PosteriorParameterGIW2(k, nk, step, IT, XT_list, icitems[k][0])
+            kN, mN, nN, VN = PosteriorParameterGIW(k, nk, step, IT, XT, icitems[k][0])
 
             mNp[k] = mN
             nNp[k] = nN
@@ -1086,12 +1174,15 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    for data in range(16): # 追加学習するときは、この値を追加するデータ分だけ入れる。
+    N = 40
+    for step in range(1, N+1): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
+        step = step + 80 # 追加学習分
         trialname = "test"
         datasetNUM = "0"
         print("Start_Learning")
+        print("step: {}".format(step))
         start_iter_time = time.time()
         # Read following
         # Xp:particle history(ID,x,y,theta,weight,previousID) at all gmapping step."
@@ -1099,15 +1190,17 @@ def callback():
         # m_count:counter of gmapping step
         # Ct:spatial_concept_index of privious teaching
         # It:position_distributions_index of privious teaching
-        Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+84) #注意
+        # Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+84) #注意
+        CT, IT = ReadParticleData_SIGVerse(trialname, step)
+        m_count = step
         for i in range(R):  # この例外処理はなんのためにある？
             while (0 in CT[i]) or (0 in IT[i]):
                 print("Error! 0 in CT,IT", CT, IT)
-                Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+84) #注意
+                # Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+84) #注意
 
         print("step", step)
         print("m_count", m_count)
-        print("Xp:particle_trajectory_and_weight_transition", Xp)
+        # print("Xp:particle_trajectory_and_weight_transition", Xp)
         print("Ct:spatial_concept_index", CT)
         print("It:position_distributions_index", IT)
         # time.sleep(30)
@@ -1132,8 +1225,12 @@ def callback():
         p_WS_log = np.array([0.0 for i in range(R)])  ###
         W_list = [[] for i in range(R)]
         ST_seq = [[] for i in range(R)]
+        CT_NEW = CT  ### For SIGVerse
+        IT_NEW = IT  ### For SIGVerse
 
         OT, Object_W_list = ReadObjectData(trialname, step)
+        # READ position data X
+        Xp = ReadPositionData_SIGVerse(step)
 
         if (UseFT == 1):
             FT = ReadImageData(trialname, step)
@@ -1158,11 +1255,13 @@ def callback():
             print("Read Ct,It data.")
             print("CT", CT[i])
             print("IT", IT[i])
-            ct, it, p_weight_log[i], p_WS_log[i] = Learning(step, filename, i, Xp[i], ST, W_list[i], CT[i], IT[i], FT,
+            ct, it, p_weight_log[i], p_WS_log[i] = Learning(step, filename, i, Xp, ST, W_list[i], CT[i], IT[i], FT,
                                                             OT, Object_W_list)  ## Learning of spatial concepts
             print("Particle:", i, " Learning complete!")
+            CT_NEW[i] += [ct]  ### For SIGVerse
+            IT_NEW[i] += [it]  ### For SIGVerse
 
-            WriteParticleData(filename, step, i, Xp[i], p_weight_log[i], ct, it, CT[i], IT[i])  # 重みは正規化されてない値が入る
+            WriteParticleData(filename, step, i, Xp, p_weight_log[i], ct, it, CT[i], IT[i])  # 重みは正規化されてない値が入る
             likelihood_list.append(p_weight_log[i])
             WriteWordData(filename, i, W_list[i])
 
@@ -1187,6 +1286,22 @@ def callback():
         sum_weight = np.sum(p_weight)
         p_weight = p_weight / sum_weight
         print("Weight:", p_weight)
+
+        #########################################################################
+        ### For SIGVerse: パーティクル集合の再構成 ###
+        particles_Current = [(CT_NEW[r], IT_NEW[r]) for r in range(R)]
+        particles_index = [i for i in range(R)]
+
+        ### For SIGVerse: リサンプリング ###
+        particles_index_NEW = np.random.choice(a=particles_index, size=R, p=p_weight)
+        particles_NEW = [particles_Current[particles_index_NEW[i]] for i in range(R)]
+        # random.choices(particles_Current, k=R, weights=p_weight)
+        # p_weight = np.array([1.0/R for i in xrange(R)]) #後の処理で元の重みの値が必要
+
+        ### For SIGVerse: リサンプリングされたパーティクル集合の保存 ###
+        WriteParticleData_SIGVerse(filename, step, particles_NEW)
+
+        #########################################################################
 
         #########################################################################
         # logの最大値を引く処理
