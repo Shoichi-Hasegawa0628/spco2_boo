@@ -161,7 +161,7 @@ def ReadImageData(trialname, step):
 def ReadPositionData_SIGVerse(step):
     XT = []
     i = 0
-    for line in open('/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/position_exp.csv', 'r'):
+    for line in open('/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/output/test/pose.csv', 'r'):
         if (i < step):
             itemList = line[:].split(',')
             # XT.append( (float(itemList[0]), float(itemList[1])) )
@@ -595,23 +595,23 @@ def SaveMaxLikelihoodParams(filename, max_likelihood_datafile, max_index):
     # shutil.copyfile(filename + "/index" + str(max_index) + ".csv", max_likelihood_datafile + "/index" + ".csv")
     # shutil.copyfile(filename + "/W_list" + str(max_index) + ".csv", max_likelihood_datafile + "/W_list" + ".csv")
 
-def debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo):
-    FilePath = "/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/debug/" + str(particle)
-    if not os.path.exists(FilePath):
-        os.makedirs(FilePath)
-    with open(FilePath + "/debug_likelihood.txt", "w") as f:
-        f.write("Result of likelihood:\n")
-        f.write("particle_number = {}\n".format(particle))
-        f.write("wz_log = {}\n".format(wz_log))
-        f.write("wf_log = {}\n".format(wf_log))
-        f.write("ws_log = {}\n".format(ws_log))
-        f.write("wo_log = {}\n".format(wo_log))
-        f.write("wic_log = {}\n".format(wic_log))
-        f.write("weight_log = {}\n".format(weight_log))
-        f.write("Ot_prob = {}\n".format(Ot_prob))
-        f.write("CRP_CT = {}\n".format(CRP_CT))
-        f.write("wo = {}\n".format(wo))
-        f.close()
+# def debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo):
+#     FilePath = "/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/debug/" + str(particle)
+#     if not os.path.exists(FilePath):
+#         os.makedirs(FilePath)
+#     with open(FilePath + "/debug_likelihood.txt", "w") as f:
+#         f.write("Result of likelihood:\n")
+#         f.write("particle_number = {}\n".format(particle))
+#         f.write("wz_log = {}\n".format(wz_log))
+#         f.write("wf_log = {}\n".format(wf_log))
+#         f.write("ws_log = {}\n".format(ws_log))
+#         f.write("wo_log = {}\n".format(wo_log))
+#         f.write("wic_log = {}\n".format(wic_log))
+#         f.write("weight_log = {}\n".format(weight_log))
+#         f.write("Ot_prob = {}\n".format(Ot_prob))
+#         f.write("CRP_CT = {}\n".format(CRP_CT))
+#         f.write("wo = {}\n".format(wo))
+#         f.close()
 
 
 
@@ -1147,9 +1147,9 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
             print("wic_log:", wic_log)
         print(wz_log, wf_log, ws_log, wo_log, weight_log, np.exp(weight_log))
 
-        ####### デバッグ
-        if (step == 82 and (particle == 14 or particle == 28 or particle == 29)):
-            debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo)
+        # ####### デバッグ
+        # if (step == 82 and (particle == 14 or particle == 28 or particle == 29)):
+        #     debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo)
 
         # print weight_log, np.exp(weight_log)
 
@@ -1174,11 +1174,11 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    N = 40
+    N = 60
     for step in range(1, N+1): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
-        step = step + 80 # 追加学習分
+        #step = step + 80 # 追加学習分
         trialname = "test"
         datasetNUM = "0"
         print("Start_Learning")
