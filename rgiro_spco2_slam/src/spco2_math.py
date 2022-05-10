@@ -69,7 +69,7 @@ def log_multivariate_t_distribution(x, mu, Sigma, df):
 def Check_VN(VN):
   if (VN[0][0] <= 0 or VN[1][1] <= 0 ):
     print("ERROR!!!! Posterior parameter VN is negative.")
-    print(VN)
+    # print(VN)
     VN = V0
   return VN
 
@@ -82,7 +82,7 @@ def PosteriorParameterGIW(k,nk,step,IT,XT,icitems_k0):
       if IT[s] == icitems_k0 : 
         xk = xk + [ np.array([XT[s].x, XT[s].y]) ]
     m_ML = sum(xk) / float(nk) #fsumではダメ
-    print("K%d n:%d m_ML:%s" % (k, nk, str(m_ML)))
+    # print("K%d n:%d m_ML:%s" % (k, nk, str(m_ML)))
 
     ##ハイパーパラメータ更新
     kN = k0 + nk
@@ -93,7 +93,7 @@ def PosteriorParameterGIW(k,nk,step,IT,XT,icitems_k0):
     VN = Check_VN(VN)
     
   else:  #データがないとき
-    print("nk[" + str(k) + "]=" + str(nk))
+    # print("nk[" + str(k) + "]=" + str(nk))
     kN = k0
     mN = m0
     nN = n0
@@ -110,7 +110,7 @@ def PosteriorParameterGIW2(k,nk,step,IT,XT,icitems_k0):
       if IT[s] == icitems_k0 : 
         xk = xk + [ np.array(XT[s]) ]
     m_ML = sum(xk) / float(nk) #fsumではダメ
-    print("K%d n:%d m_ML:%s" % (k, nk, str(m_ML)))
+    # print("K%d n:%d m_ML:%s" % (k, nk, str(m_ML)))
 
     ##ハイパーパラメータ更新
     kN = k0 + nk
