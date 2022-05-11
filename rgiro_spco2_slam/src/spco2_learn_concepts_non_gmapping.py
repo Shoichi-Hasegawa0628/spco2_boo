@@ -120,6 +120,9 @@ nltk.download('stopwords')
 stop_words = stopwords.words('english')
 stop_words.append(",")
 stop_words.append("?")
+stop_words.append("room")
+stop_words.append("i'm")
+stop_words.append("let's")
 
 # import sys
 # import roslib.packages
@@ -144,15 +147,22 @@ def ReadObjectTopic(object_path):
 
 
 def ReadObjectData(trialname, step):
-    with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_W_list.csv", 'r') as f:
+    with open(datafolder + trialname + "/tmp_boo/Object_W_list.csv", 'r') as f:
         reader = csv.reader(f)
         Object_W_list = [row for row in reader]
         # print(Object_W_list[0])
 
-    with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r') as f:
-        reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
-        OT = [row for row in reader]
-        # print(OT)
+    # with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r') as f:
+    #     reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
+    #     OT = [row for row in reader]
+    #     # print(OT)
+
+    OT = []
+    for s in range(step):
+        for line in open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r'):
+            # for line in open( datasetfolder + datasetname + 'img/ft' + str(s+1) + '.csv', 'r'):
+            itemList = line[:].split(',')
+        OT.append([float(itemList[i]) for i in range(len(object_dictionary))])
 
     return OT, Object_W_list[0]
 

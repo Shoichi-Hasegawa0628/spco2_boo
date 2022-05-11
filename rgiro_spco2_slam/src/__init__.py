@@ -13,13 +13,13 @@ dimx = 2             #The number of dimensions of xt (x,y)
 ##Initial (hyper) parameters
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
 # alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
-alpha0 = 0.1 #(master_thesis)18.9 # 0.09(site Visit)
+alpha0 = 0.08 #(master_thesis)18.9 # 0.09(site Visit)
 gamma0 = 0.1         #Hyperparameter of CRP in multinomial distribution for index of position distribution
 beta0 = 0.1          #Hyperparameter in multinomial distribution P(W) for place names 
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
 # k0 = 1e-3          #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
 #k0 = 1.0             #注意 (master_thesis)
-k0 = 0.25
+k0 = 0.2
 m0 = np.zeros(dimx)  #Hyperparameter in Gaussina distribution P(μ) (prior mean vector)
 V0 = np.eye(dimx)*2  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix) 
 n0 = 3.0             #Hyperparameter in Inverse Wishart distribution P(Σ) {>the number of dimenssions] (Influence degree of prior distribution of Σ)
@@ -36,12 +36,10 @@ LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
 lamb = 0.1
-object_dictionary = ["plate", "bowl", "pitcher_base", "banana",
-                      "apple", "orange", "cracker_box", "pudding_box",
-                      "chips_bag", "coffee", "muscat", "fruits_juice",
-                      "pig_doll", "sheep_doll", "penguin_doll", "airplane_toy",
-                      "car_toy", "truck_toy", "tooth_paste", "towel",
-                      "cup", "treatments", "sponge", "bath_slipper"]
+object_dictionary = ['plate', 'bowl', 'pitcher_base', 'banana', 'apple', 'orange', 'cracker_box', 'pudding_box',
+                     'chips_bag', 'coffee', 'muscat', 'fruits_juice', 'pig_doll', 'sheep_doll', 'penguin_doll',
+                     'airplane_toy', 'car_toy', 'truck_toy', 'tooth_paste', 'towel', 'cup', 'treatments', 'sponge',
+                     'bath_slipper', 'dolphin_shaped_sponge', 'flog_shaped_sponge']
 ####################Option setting (NOT USE)####################
 UseFT = 1       #画像特徴を使う場合 (１) 、使わない場合 (０) 
 UseLM = 1       #言語モデルを更新する場合 (１) 、しない場合 (０) 
