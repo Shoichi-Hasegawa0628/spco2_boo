@@ -123,6 +123,7 @@ stop_words.append("?")
 stop_words.append("room")
 stop_words.append("i'm")
 stop_words.append("let's")
+# stop_words.append(" ")
 
 # import sys
 # import roslib.packages
