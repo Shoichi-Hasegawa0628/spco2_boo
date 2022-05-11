@@ -159,7 +159,7 @@ def ReadObjectData(trialname, step):
 
     OT = []
     for s in range(step):
-        for line in open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r'):
+        for line in open(datafolder + trialname + "/tmp_boo/" + str(s + 1) + "_Object_BOO.csv", 'r'):
             # for line in open( datasetfolder + datasetname + 'img/ft' + str(s+1) + '.csv', 'r'):
             itemList = line[:].split(',')
         OT.append([float(itemList[i]) for i in range(len(object_dictionary))])
