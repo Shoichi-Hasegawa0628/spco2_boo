@@ -109,6 +109,19 @@ import sys
 import os.path
 import time
 import shutil
+from tqdm import tqdm
+
+from nltk.corpus import stopwords
+import nltk
+
+# ストップワードの読み込み
+nltk.download('stopwords')
+stop_words = stopwords.words('english')
+stop_words.append(",")
+stop_words.append("?")
+stop_words.append("room")
+stop_words.append("i'm")
+stop_words.append("let's")
 
 # import sys
 # import roslib.packages
@@ -132,16 +145,36 @@ def ReadObjectTopic(object_path):
 """
 
 
+# def ReadObjectData(trialname, step):
+#     with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_W_list.csv", 'r') as f:
+#         reader = csv.reader(f)
+#         Object_W_list = [row for row in reader]
+#         print(Object_W_list[0])
+#
+#     with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r') as f:
+#         reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
+#         OT = [row for row in reader]
+#         print(OT)
+#
+#     return OT, Object_W_list[0]
+
 def ReadObjectData(trialname, step):
-    with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_W_list.csv", 'r') as f:
+    with open(datafolder + trialname + "/tmp_boo/Object_W_list.csv", 'r') as f:
         reader = csv.reader(f)
         Object_W_list = [row for row in reader]
-        print(Object_W_list[0])
+        # print(Object_W_list[0])
 
-    with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r') as f:
-        reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
-        OT = [row for row in reader]
-        print(OT)
+    # with open(datafolder + trialname + "/tmp_boo/" + str(step) + "_Object_BOO.csv", 'r') as f:
+    #     reader = csv.reader(f, quoting=csv.QUOTE_NONNUMERIC)
+    #     OT = [row for row in reader]
+    #     # print(OT)
+
+    OT = []
+    for s in range(step):
+        for line in open(datafolder + trialname + "/tmp_boo/" + str(s + 1) + "_Object_BOO.csv", 'r'):
+            # for line in open( datasetfolder + datasetname + 'img/ft' + str(s+1) + '.csv', 'r'):
+            itemList = line[:].split(',')
+        OT.append([float(itemList[i]) for i in range(len(object_dictionary))])
 
     return OT, Object_W_list[0]
 
@@ -202,6 +235,11 @@ def ReadWordData(step, trialname, particle):
                     max_particle = int(line)
                 i += 1
     ######################################################
+    # # ストップワードの読み込み
+    # nltk.download('stopwords')
+    # stop_words = stopwords.words('english')
+    # stop_words.append(",")
+    # stop_words.append("?")
 
     # テキストファイルを読み込み
     with open(Otb_FilePath, 'r') as f:
@@ -212,6 +250,8 @@ def ReadWordData(step, trialname, particle):
     W_list = []
     for n in range(len(Otb)):
         for j in range(len(Otb[n])):
+            if ((Otb[n][j] in stop_words) == True):
+                continue
             if ((Otb[n][j] in W_list) == False):
                 W_list.append(Otb[n][j])
 
@@ -237,12 +277,12 @@ def ReadWordData(step, trialname, particle):
 
     # Output W_list and Otb_BoW 2021/03/06
     if (particle == max_particle):
-        print("Otb:")
-        print(Otb)
-        print("Otb_BOW:")
-        print(Otb_BOW)
-        print("W_list:")
-        print(W_list)
+        # print("Otb:")
+        # print(Otb)
+        # print("Otb_BOW:")
+        # print(Otb_BOW)
+        # print("W_list:")
+        # print(W_list)
 
         ## save massage as a csv format
         FilePath = datafolder + trialname + "/tmp/step" + str(step) + "_Otb.csv"
@@ -302,7 +342,7 @@ def ParticleSearcher(trialname, data):
         m_count += 1
 
     if (m_count == 0):  # エラー処理:Set teachingflag zero and exit spco2_learn_concepts.py process.
-        print("m_count", m_count)
+        # print("m_count", m_count)
         flag = 0
         fp = open(datafolder + trialname + "/teachingflag.txt", 'w')
         fp.write(str(flag))
@@ -323,7 +363,7 @@ def ParticleSearcher(trialname, data):
 
     steplist = m_count2step(trialname, m_count)
     step = len(steplist)
-    print("step: {}".format(step))
+    # print("step: {}".format(step))
     # print steplist
 
 
@@ -359,7 +399,7 @@ def ParticleSearcher(trialname, data):
             CT[i] = [1]
             IT[i] = [1]
         elif (steplist[-2][0] == m_count):  # m_countが直前のステップにおいても同じ場合の例外処理
-            print("m_count", steplist[-2][0], steplist[-1][0])
+            # print("m_count", steplist[-2][0], steplist[-1][0])
             CT[i] = [CTtemp[i][s] for s in range(step - 1)]
             IT[i] = [ITtemp[i][s] for s in range(step - 1)]
 
@@ -403,8 +443,8 @@ def m_count2step(trialname, m_count):
             #    break
             step += 1
 
-    print(list)
-    print(step)
+    # print(list)
+    # print(step)
 
     # Update m_count2step.csv
     if (step == len(list) + 1) or (step == 1 and len(list) == 1):  # テスト用の実行で同じm_countのデータカウントが増えないように
@@ -477,8 +517,8 @@ def ReadParticleData_SIGVerse(trialname, step):
   #  CT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
   #  IT = [ [0 for s in xrange(step-1)] for i in xrange(R) ]
   #  print "Initialize CT:",CT,"IT:",IT
-  print("CT:",CT)
-  print("IT:",IT)
+  # print("CT:",CT)
+  # print("IT:",IT)
   return CT,IT
 
   #for r in range(R):
@@ -626,11 +666,11 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
     ########################################################################
     ####                   　    ↓Learning phase↓                       ####
     ########################################################################
-    print(u"- <START> Learning of Spatial Concepts in Particle:" + str(particle) + " -")
+    # print(u"- <START> Learning of Spatial Concepts in Particle:" + str(particle) + " -")
     ##sampling ct and it
-    print(u"Sampling Ct,it...")
+    # print(u"Sampling Ct,it...")
     cstep = step - 1
-    print("cstep: {}".format(cstep))
+    # print("cstep: {}".format(cstep))
     # k0m0m0 = k0*np.dot(np.array([m0]).T,np.array([m0]))
     G = len(W_list)
     E = DimImg
@@ -659,8 +699,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         Nle_c = [sum([np.array(FT[0])])]
         # thetac_temp = [(np.array(Nle_c[0]) + chi0 ) / (sum(Nle_c[0]) + E*chi0)]
         theta = [(np.array(Nle_c[0]) + chi0) / (sum(Nle_c[0]) + E * chi0)]  # [thetac_temp[0]]
-        print("theta=", theta)
-        print("theta(arg)", (np.array(Nle_c[0]) + chi0) / (sum(Nle_c[0]) + E * chi0))
+        # print("theta=", theta)
+        # print("theta(arg)", (np.array(Nle_c[0]) + chi0) / (sum(Nle_c[0]) + E * chi0))
         # time.sleep(30)
 
         # nk = 1
@@ -705,7 +745,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         Nct = sum(cclist)  # 場所概念の総カウント数=データ数(前ステップ:t-1)
         # Nit_l = sum(np.array(iccList))  #場所概念ｃごとの位置分布の総カウント数＝ 場所概念ｃごとのカウント数
         # これはcclistと一致するはず
-        print(Nct, cclist)  # , Nit_l
+        # print(Nct, cclist)  # , Nit_l
 
         CRP_CT = np.array(cclist + [alpha0]) / (Nct + alpha0)
         CRP_ITC = np.array([np.array(
@@ -747,12 +787,12 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 
         # ctとitの組をずらっと横に並べる (ベクトル) ->2次元配列で表現 (temp[L+1][K+1]) [L=new][K=exist]は0
         # temp2 = np.array([[10.0**10 * tpdf[i] * CRP_ITC[c][i] * CRP_CT[c] for i in xrange(K+1)] for c in xrange(L+1)])
-        print("--------------------")  #####
+        # print("--------------------")  #####
         # print temp2 #####
         temp22 = 10.0 ** 10 * tpdf.T * (CRP_CT * CRP_ITC.T).T  #####
         # temp2 = temp22
-        print(temp22)  #####
-        print("--------------------")  #####
+        # print(temp22)  #####
+        # print("--------------------")  #####
 
         St_prob = np.array([1.0 for c in range(L + 1)])
         Ft_prob = np.array([1.0 for c in range(L + 1)])
@@ -787,7 +827,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         # temp2[l] = temp2[l] * St_prob[l] * Ft_prob[l]
 
         temp2 = (temp22.T * St_prob * Ft_prob * Ot_prob).T
-        print(temp2)
+        # print(temp2)
 
         # 2次元配列を1次元配列にする
         c, i = 0, 0
@@ -815,20 +855,20 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         # ct,itがNEWクラスターなら新しい番号を与える
         if C == L:
             ct = max(cc) + 1
-            print("c=" + str(ct) + " is new.")
+            # print("c=" + str(ct) + " is new.")
             Lp += 1
         else:
             ct = ccitems[C][0]
         if I == K:
             it = max(ic) + 1
-            print("i=" + str(it) + " is new.")
+            # print("i=" + str(it) + " is new.")
             Kp += 1
             icitems += [(it, 1)]
         else:
             it = icitems[I][0]
 
         # print ct,it
-        print("C", C, ", ct", ct, "; I", I, ", it", it)
+        # print("C", C, ", ct", ct, "; I", I, ", it", it)
 
         # C,Kのカウントを増やす
         if C == L:  # L is new
@@ -890,7 +930,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                     # print np.array(icclist)
 
                     Nct = sum(cclist)  # 場所概念の総カウント数=データ数(現ステップから一つ除いたもの)
-                    print(Nct, cclist)  # , Nit_l
+                    # print(Nct, cclist)  # , Nit_l
 
                     ###サンプリング式を再計算
                     CRP_CT = np.array(cclist + [alpha0]) / (Nct + alpha0)
@@ -927,12 +967,12 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 
                     # 2次元配列で表現 (temp[L+1][K+1]) [L=new][K=exist]は0
                     # temp2 = np.array([[10.0**10 * tpdf[i] * CRP_ITC[c][i] * CRP_CT[c] for i in xrange(K+1)] for c in xrange(L+1)])
-                    print("--------------------")  #####
+                    # print("--------------------")  #####
                     # print temp2 #####
                     temp22 = 10.0 ** 10 * tpdf.T * (CRP_CT * CRP_ITC.T).T  #####
                     # temp2 = temp22
-                    print(temp22)  #####
-                    print("--------------------")  #####
+                    # print(temp22)  #####
+                    # print("--------------------")  #####
 
                     St_prob = np.array([1.0 for c in range(L + 1)])
                     Ft_prob = np.array([1.0 for c in range(L + 1)])
@@ -966,7 +1006,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                     ###########################################
                     # temp2[l] = temp2[l] * St_prob[l] * Ft_prob[l]
                     temp2 = (temp22.T * St_prob * Ft_prob * Ot_prob).T
-                    print(temp2)
+                    # print(temp2)
 
                     ###リサンプリング
                     # 2次元配列を1次元配列にする
@@ -996,19 +1036,19 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                     # ct,itがNEWクラスターなら新しい番号を与える
                     if C_tau == L:
                         ct = max(cc) + 1
-                        print("c=" + str(ct) + " is new.")
+                        # print("c=" + str(ct) + " is new.")
                         Lp += 1
                     else:
                         ct = ccitems[C_tau][0]
                     if I_tau == K:
                         it = max(ic) + 1
-                        print("i=" + str(it) + " is new.")
+                        # print("i=" + str(it) + " is new.")
                         Kp += 1
                         icitems += [(it, 1)]
                     else:
                         it = icitems[I_tau][0]
 
-                    print("C_tau", C_tau, ", ct", ct, "; I_tau", I_tau, ", it", it)
+                    # print("C_tau", C_tau, ", ct", ct, "; I_tau", I_tau, ", it", it)
 
                     # C_tau,I_tauのカウントを増やす
                     if C_tau == L:  # L is new
@@ -1136,7 +1176,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
                     W_temp2_log_step = np.log(np.array(Ng_step) + beta0) - log(sum(Ng_step) + G * beta0)
                     ps_log_step = sum(np.array(W_temp2_log_step) * np.array(ST[step_iter]))
                     WS_log -= ps_log_step
-            print("WS_log:", WS_log)
+            # print("WS_log:", WS_log)
         ##############################################################
 
         # weight_log = wz_log+wf_log+ws_log   #sum of log probability
@@ -1144,8 +1184,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         weight_log = wf_log + ws_log + wo_log  # sum of log probability (SpCoSLAM-MLDA用)
         if (wic == 1):
             weight_log += wic_log
-            print("wic_log:", wic_log)
-        print(wz_log, wf_log, ws_log, wo_log, weight_log, np.exp(weight_log))
+        #     print("wic_log:", wic_log)
+        # print(wz_log, wf_log, ws_log, wo_log, weight_log, np.exp(weight_log))
 
         ####### デバッグ
         if (step == 82 and (particle == 14 or particle == 28 or particle == 29)):
@@ -1165,8 +1205,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         WriteIndexData(filename, particle, ccitems, icitems, ct, it)
         ########  ↑File Output of Learning Result↑  ########
     # print "--------------------"
-    print(u"- <COMPLETED> Learning of Spatial Concepts in Particle:" + str(particle) + " -")
-    print("Xi : {}".format(Xi))
+    # print(u"- <COMPLETED> Learning of Spatial Concepts in Particle:" + str(particle) + " -")
+    # print("Xi : {}".format(Xi))
     # print "--------------------"
     return ct, it, weight_log, WS_log
 
@@ -1174,15 +1214,15 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    N = 20
-    for step in range(1, N+1): # 追加学習するときは、この値を追加するデータ分だけ入れる。
+    N = 54
+    for step in tqdm(range(1, N+1)): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
-        step = step + 80 # 追加学習分
+        step = step # + 80 # 追加学習分
         trialname = "test"
         datasetNUM = "0"
-        print("Start_Learning")
-        print("step: {}".format(step))
+        # print("Start_Learning")
+        # print("step: {}".format(step))
         start_iter_time = time.time()
         # Read following
         # Xp:particle history(ID,x,y,theta,weight,previousID) at all gmapping step."
@@ -1198,11 +1238,11 @@ def callback():
                 print("Error! 0 in CT,IT", CT, IT)
                 # Xp, step, m_count, CT, IT = ParticleSearcher(trialname, data+84) #注意
 
-        print("step", step)
-        print("m_count", m_count)
+        # print("step", step)
+        # print("m_count", m_count)
         # print("Xp:particle_trajectory_and_weight_transition", Xp)
-        print("Ct:spatial_concept_index", CT)
-        print("It:position_distributions_index", IT)
+        # print("Ct:spatial_concept_index", CT)
+        # print("It:position_distributions_index", IT)
         # time.sleep(30)
 
         # teachingtime = []
@@ -1217,8 +1257,8 @@ def callback():
         filename = datafolder + trialname + "/" + str(step)  ##FullPath of learning trial folder
         Makedir(filename)
 
-        print("filename", filename)
-        print("trialname", trialname)
+        # print("filename", filename)
+        # print("trialname", trialname)
 
         p_weight_log = np.array([0.0 for i in range(R)])
         p_weight = np.array([0.0 for i in range(R)])
@@ -1239,10 +1279,10 @@ def callback():
 
         likelihood_list = []
         # パーティクルごとに計算
-        for i in range(R):
+        for i in tqdm(range(R)):
             # for i in xrange(R): ###############
-            print("--------------------------------------------------")  ###############
-            print("Particle:", i)  ###############
+            # print("--------------------------------------------------")  ###############
+            # print("Particle:", i)  ###############
 
             # Read teaching infomation
             #  St:Bag of word representation of every teaching sentence.
@@ -1250,14 +1290,14 @@ def callback():
             #  ST_seq[i]:plain text of every teaching sentence
             W_list[i], ST, ST_seq[i] = ReadWordData(step, trialname, i)
 
-            print("Read word data.")
+            # print("Read word data.")
             # CT, IT = ReaditCtData(trialname, step, i)
-            print("Read Ct,It data.")
-            print("CT", CT[i])
-            print("IT", IT[i])
+            # print("Read Ct,It data.")
+            # print("CT", CT[i])
+            # print("IT", IT[i])
             ct, it, p_weight_log[i], p_WS_log[i] = Learning(step, filename, i, Xp, ST, W_list[i], CT[i], IT[i], FT,
                                                             OT, Object_W_list)  ## Learning of spatial concepts
-            print("Particle:", i, " Learning complete!")
+            # print("Particle:", i, " Learning complete!")
             CT_NEW[i] += [ct]  ### For SIGVerse
             IT_NEW[i] += [it]  ### For SIGVerse
 
@@ -1265,14 +1305,14 @@ def callback():
             likelihood_list.append(p_weight_log[i])
             WriteWordData(filename, i, W_list[i])
 
-            print("Write particle data and word data.")
+            # print("Write particle data and word data.")
 
         max_likelihood = max(likelihood_list)
         max_index = likelihood_list.index(max_likelihood)
         # print(max_index)
         max_likelihood_datafile = datafolder + trialname + "/max_likelihood_param/" + str(step)
         SaveMaxLikelihoodParams(filename, max_likelihood_datafile, max_index)
-        print("--------------------------------------------------")  ###############
+        # print("--------------------------------------------------")  ###############
         # logの最大値を引く処理
         # print p_weight_log
         logmax = np.max(p_weight_log)
@@ -1285,7 +1325,7 @@ def callback():
         p_weight = np.exp(p_weight_log)
         sum_weight = np.sum(p_weight)
         p_weight = p_weight / sum_weight
-        print("Weight:", p_weight)
+        # print("Weight:", p_weight)
 
         #########################################################################
         ### For SIGVerse: パーティクル集合の再構成 ###
@@ -1313,7 +1353,7 @@ def callback():
         p_WS = np.exp(p_WS_log)
         sum_WS = np.sum(p_WS)
         p_WS = p_WS / sum_WS
-        print("WS:", p_WS)
+        # print("WS:", p_WS)
         #########################################################################
 
         MAX_weight_particle = np.argmax(
@@ -1332,7 +1372,7 @@ def callback():
         else:
             MAX_LM_particle = MAX_weight_particle
 
-        print(MAX_LM_particle)
+        # print(MAX_LM_particle)
 
         W_list_particle = W_list[MAX_LM_particle]
         ##########最大重みのパーティクルの単語集合についてNPYLMを実行##########
@@ -1371,7 +1411,7 @@ def callback():
 
         ## Publish messeage for start_visualization
         str_msg = 'start_visualization'  # std_msgs.msg.String(data= message.data )
-        print("Publish!")
+        # print("Publish!")
         # print("OT: {}".format(OT))
         pub.publish(str_msg)
 
