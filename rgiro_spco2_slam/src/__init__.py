@@ -13,8 +13,8 @@ dimx = 2             #The number of dimensions of xt (x,y)
 ##Initial (hyper) parameters
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
 # alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
-alpha0 = 0.01
-gamma0 = 0.1         #Hyperparameter of CRP in multinomial distribution for index of position distribution
+alpha0 = 0.005
+gamma0 = 0.05  #0.1      #Hyperparameter of CRP in multinomial distribution for index of position distribution
 beta0 = 0.1          #Hyperparameter in multinomial distribution P(W) for place names 
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
 # k0 = 1e-3          #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
@@ -34,7 +34,7 @@ tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１
 LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
-lamb = 0.1
+lamb = 5.0 #0.1
 object_dictionary = ["apple", "orange", "cracker", "chips_bag",
                       "coffee", "muscat", "penguin_doll", "frog_shaped_sponge",
                       "cup", "sponge"]
