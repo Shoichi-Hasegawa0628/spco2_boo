@@ -14,13 +14,13 @@ dimx = 2             #The number of dimensions of xt (x,y)
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
 # alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
 alpha0 = 0.005
-gamma0 = 0.05  #0.1      #Hyperparameter of CRP in multinomial distribution for index of position distribution
+gamma0 = 0.08  #0.05      #Hyperparameter of CRP in multinomial distribution for index of position distribution
 beta0 = 0.1          #Hyperparameter in multinomial distribution P(W) for place names 
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
 # k0 = 1e-3          #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
-k0 = 0.25           #注意
+k0 = 0.15 #0.25           #注意
 m0 = np.zeros(dimx)  #Hyperparameter in Gaussina distribution P(μ) (prior mean vector)
-V0 = np.eye(dimx)*2  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix) 
+V0 = np.eye(dimx)*1  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix)
 n0 = 2.0             #Hyperparameter in Inverse Wishart distribution P(Σ) {>the number of dimenssions] (Influence degree of prior distribution of Σ)
 k0m0m0 = k0*np.dot(np.array([m0]).T,np.array([m0]))
 
@@ -35,10 +35,8 @@ LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
 lamb = 5.0 #0.1
-object_dictionary = ["apple", "orange", "cracker", "chips_bag",
-                      "coffee", "muscat", "penguin_doll", "frog_shaped_sponge",
-                      "cup", "sponge"]
 
+object_dictionary = ["apple", "cracker", "coffee", "penguin_doll", "frog_shaped_sponge", "cup"]
 ####################Option setting (NOT USE)####################
 UseFT = 1       #画像特徴を使う場合 (１) 、使わない場合 (０) 
 UseLM = 1       #言語モデルを更新する場合 (１) 、しない場合 (０) 

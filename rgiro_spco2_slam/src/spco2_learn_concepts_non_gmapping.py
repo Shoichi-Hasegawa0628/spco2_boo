@@ -118,6 +118,8 @@ import nltk
 nltk.download('stopwords')
 stop_words = stopwords.words('english')
 stop_words.append(",")
+stop_words.append("bathroom,")
+stop_words.append("kitchen,")
 stop_words.append("?")
 stop_words.append("room")
 stop_words.append("i'm")
@@ -261,7 +263,9 @@ def ReadWordData(step, trialname, particle):
     for n in range(len(Otb)):
         for j in range(len(Otb[n])):
             for i in range(len(W_list)):
-                if (W_list[i] == Otb[n][j]):
+                if ((Otb[n][j] in stop_words) == True):
+                    continue
+                elif (W_list[i] == Otb[n][j]):
                     Otb_BOW[n][i] = Otb_BOW[n][i] + 1
 
     ###################################################### #2021/03/06
