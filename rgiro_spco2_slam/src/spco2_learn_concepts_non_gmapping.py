@@ -1087,6 +1087,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         phi = [(np.array(icclist[c]) + gamma0 / float(Kp)) / (cclist[c] + gamma0) for c in range(Lp)]
 
         # Cの場所概念にStのカウントを足す
+        # 単語ごとのCtの割当て回数はここ？
         Nlg_c = [sum([np.array(ST[s]) * (CT[s] == ccitems[c][0]) for s in range(step)]) for c in range(Lp)]
         # Wc_temp = [(np.array(Nlg_c[c]) + beta0 ) / (sum(Nlg_c[c]) + G*beta0) for c in xrange(Lp)]
         W = [(np.array(Nlg_c[c]) + beta0) / (sum(Nlg_c[c]) + G * beta0) for c in
@@ -1218,11 +1219,11 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    N = 90
+    N = 60
     for step in tqdm(range(1, N+1)): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
-        step = step # + 80 # 追加学習分
+        # step = step # + 80 # 追加学習分
         trialname = "test"
         datasetNUM = "0"
         # print("Start_Learning")
