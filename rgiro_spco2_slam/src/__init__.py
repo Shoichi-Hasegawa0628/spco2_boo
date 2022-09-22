@@ -34,7 +34,7 @@ tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１
 LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
-lamb = 2.0 #5.0
+lamb = 5.0
 
 object_dictionary = ['plate', 'bowl', 'pitcher_base', 'banana',
                      'apple', 'orange', 'cracker_box', 'pudding_box',
