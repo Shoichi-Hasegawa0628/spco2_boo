@@ -116,14 +116,41 @@ import nltk
 
 # ストップワードの読み込み
 nltk.download('stopwords')
+# ['i', 'me', 'my', 'myself', 'we', 'our',
+# 'ours', 'ourselves', 'you', "you're", "you've",
+# "you'll", "you'd", 'your', 'yours', 'yourself',
+# 'yourselves', 'he', 'him', 'his', 'himself',
+# 'she', "she's", 'her', 'hers', 'herself', 'it',
+# "it's", 'its', 'itself', 'they', 'them', 'their',
+# 'theirs', 'themselves', 'what', 'which', 'who', 'whom',
+# 'this', 'that', "that'll", 'these', 'those', 'am', 'is',
+# 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has',
+# 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the',
+# 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of',
+# 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into',
+# 'through', 'during', 'before', 'after', 'above', 'below',
+# 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off',
+# 'over', 'under', 'again', 'further', 'then', 'once', 'here',
+# 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both',
+# 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no',
+# 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very',
+# 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've",
+# 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't",
+# 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn',
+# "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma',
+# 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan',
+# "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't",
+# 'won', "won't", 'wouldn', "wouldn't"]
+
+
 stop_words = stopwords.words('english')
 stop_words.append(",")
-stop_words.append("bathroom,")
-stop_words.append("kitchen,")
 stop_words.append("?")
+stop_words.append("!")
 stop_words.append("room")
 stop_words.append("i'm")
 stop_words.append("let's")
+stop_words.append("This")
 
 # import sys
 # import roslib.packages
@@ -639,23 +666,23 @@ def SaveMaxLikelihoodParams(filename, max_likelihood_datafile, max_index):
     # shutil.copyfile(filename + "/index" + str(max_index) + ".csv", max_likelihood_datafile + "/index" + ".csv")
     # shutil.copyfile(filename + "/W_list" + str(max_index) + ".csv", max_likelihood_datafile + "/W_list" + ".csv")
 
-def debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo):
-    FilePath = "/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/debug/" + str(particle)
-    if not os.path.exists(FilePath):
-        os.makedirs(FilePath)
-    with open(FilePath + "/debug_likelihood.txt", "w") as f:
-        f.write("Result of likelihood:\n")
-        f.write("particle_number = {}\n".format(particle))
-        f.write("wz_log = {}\n".format(wz_log))
-        f.write("wf_log = {}\n".format(wf_log))
-        f.write("ws_log = {}\n".format(ws_log))
-        f.write("wo_log = {}\n".format(wo_log))
-        f.write("wic_log = {}\n".format(wic_log))
-        f.write("weight_log = {}\n".format(weight_log))
-        f.write("Ot_prob = {}\n".format(Ot_prob))
-        f.write("CRP_CT = {}\n".format(CRP_CT))
-        f.write("wo = {}\n".format(wo))
-        f.close()
+# def debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo):
+#     FilePath = "/root/HSR/catkin_ws/src/spco2_boo/rgiro_spco2_slam/data/debug/" + str(particle)
+#     if not os.path.exists(FilePath):
+#         os.makedirs(FilePath)
+#     with open(FilePath + "/debug_likelihood.txt", "w") as f:
+#         f.write("Result of likelihood:\n")
+#         f.write("particle_number = {}\n".format(particle))
+#         f.write("wz_log = {}\n".format(wz_log))
+#         f.write("wf_log = {}\n".format(wf_log))
+#         f.write("ws_log = {}\n".format(ws_log))
+#         f.write("wo_log = {}\n".format(wo_log))
+#         f.write("wic_log = {}\n".format(wic_log))
+#         f.write("weight_log = {}\n".format(weight_log))
+#         f.write("Ot_prob = {}\n".format(Ot_prob))
+#         f.write("CRP_CT = {}\n".format(CRP_CT))
+#         f.write("wo = {}\n".format(wo))
+#         f.close()
 
 
 
@@ -1093,6 +1120,22 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         W = [(np.array(Nlg_c[c]) + beta0) / (sum(Nlg_c[c]) + G * beta0) for c in
              range(Lp)]  # [Wc_temp[c] for c in xrange(Lp)]
 
+
+        #########################
+        # Nlg_c = [sum([np.array(ST[s]) * (CT[s] == ccitems[c][0]) for s in range(step)]) for c in range(Lp)]
+        #
+        # Nlg_c_pre = []
+        # Nlg_c = []
+        # for c in range(Lp):
+        #     for s in range(step):
+        #         Nlg_c_pre.append(np.array(ST[s]) * (CT[s] == ccitems[c][0]))
+        #     Nlg_c.append(sum(Nlg_c_pre))
+        #
+        #
+        # W = [(np.array(Nlg_c[c]) + beta0) / (sum(Nlg_c[c]) + G * beta0) for c in
+        #      range(Lp)]  # [Wc_temp[c] for c in xrange(Lp)]
+        #########################
+
         # Cの場所概念にFtのカウントを足す
         Nle_c = [sum([np.array(FT[s]) * (CT[s] == ccitems[c][0]) for s in range(step)]) for c in range(Lp)]
         # thetac_temp = [(np.array(Nle_c[c]) + chi0 ) / (sum(Nle_c[c]) + E*chi0) for c in xrange(Lp)]
@@ -1193,8 +1236,8 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
         # print(wz_log, wf_log, ws_log, wo_log, weight_log, np.exp(weight_log))
 
         ####### デバッグ
-        if (step == 82 and (particle == 14 or particle == 28 or particle == 29)):
-            debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo)
+        # if (step == 82 and (particle == 14 or particle == 28 or particle == 29)):
+        #     debug_weight(particle, wz_log, wf_log, ws_log, wo_log, wic_log, weight_log, Ot_prob, CRP_CT, wo)
 
         # print weight_log, np.exp(weight_log)
 
@@ -1213,13 +1256,13 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
     # print(u"- <COMPLETED> Learning of Spatial Concepts in Particle:" + str(particle) + " -")
     # print("Xi : {}".format(Xi))
     # print "--------------------"
-    return ct, it, weight_log, WS_log
+    return ct, it, weight_log, WS_log, W
 
 
 ########################################
 # def callback(message):
 def callback():
-    N = 60
+    N = 180
     for step in tqdm(range(1, N+1)): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
@@ -1284,6 +1327,7 @@ def callback():
 
         likelihood_list = []
         # パーティクルごとに計算
+        W_temp = []
         for i in tqdm(range(R)):
             # for i in xrange(R): ###############
             # print("--------------------------------------------------")  ###############
@@ -1300,7 +1344,7 @@ def callback():
             # print("Read Ct,It data.")
             # print("CT", CT[i])
             # print("IT", IT[i])
-            ct, it, p_weight_log[i], p_WS_log[i] = Learning(step, filename, i, Xp, ST, W_list[i], CT[i], IT[i], FT,
+            ct, it, p_weight_log[i], p_WS_log[i], W = Learning(step, filename, i, Xp, ST, W_list[i], CT[i], IT[i], FT,
                                                             OT, Object_W_list)  ## Learning of spatial concepts
             # print("Particle:", i, " Learning complete!")
             CT_NEW[i] += [ct]  ### For SIGVerse
@@ -1310,6 +1354,8 @@ def callback():
             likelihood_list.append(p_weight_log[i])
             WriteWordData(filename, i, W_list[i])
 
+            W_temp.append(W)
+
             # print("Write particle data and word data.")
 
         max_likelihood = max(likelihood_list)
@@ -1317,6 +1363,18 @@ def callback():
         # print(max_index)
         max_likelihood_datafile = datafolder + trialname + "/max_likelihood_param/" + str(step)
         SaveMaxLikelihoodParams(filename, max_likelihood_datafile, max_index)
+
+        ######
+        # 場所の単語分布のprint (各学習ごとにおける尤も尤度の高い粒子)
+        # print(W_list[max_index]) # 単語辞書
+        # print(len(W_list[max_index]))
+        # print(W_temp[max_index])
+        # print(W_temp[max_index][0].size)
+
+        ######
+
+
+
         # print("--------------------------------------------------")  ###############
         # logの最大値を引く処理
         # print p_weight_log

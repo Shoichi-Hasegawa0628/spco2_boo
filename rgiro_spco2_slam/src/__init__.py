@@ -20,7 +20,7 @@ chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image
 # k0 = 1e-3          #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
 k0 = 0.20           #注意
 m0 = np.zeros(dimx)  #Hyperparameter in Gaussina distribution P(μ) (prior mean vector)
-V0 = np.eye(dimx)*2  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix)
+V0 = np.eye(dimx)*1  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix)
 n0 = 3.0             #Hyperparameter in Inverse Wishart distribution P(Σ) {>the number of dimenssions] (Influence degree of prior distribution of Σ)
 k0m0m0 = k0*np.dot(np.array([m0]).T,np.array([m0]))
 
@@ -34,7 +34,7 @@ tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１
 LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
-lamb = 5.0 #0.1
+lamb = 2.0 #5.0
 
 object_dictionary = ['plate', 'bowl', 'pitcher_base', 'banana',
                      'apple', 'orange', 'cracker_box', 'pudding_box',
