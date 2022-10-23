@@ -36,12 +36,17 @@ LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
 lamb = 5.0
 
-object_dictionary = ['plate', 'bowl', 'pitcher_base', 'banana',
-                     'apple', 'orange', 'cracker_box', 'pudding_box',
-                     'chips_bag', 'coffee', 'muscat', 'fruits_juice',
-                     'pig_doll', 'sheep_doll', 'penguin_doll', 'airplane_toy',
-                     'car_toy', 'truck_toy', 'tooth_paste', 'towel',
-                     'cup', 'treatments', 'sponge', 'bath_slipper']
+# object_dictionary = ['plate', 'bowl', 'pitcher_base', 'banana',
+#                      'apple', 'orange', 'cracker_box', 'pudding_box',
+#                      'chips_bag', 'coffee', 'muscat', 'fruits_juice',
+#                      'pig_doll', 'sheep_doll', 'penguin_doll', 'airplane_toy',
+#                      'car_toy', 'truck_toy', 'tooth_paste', 'towel',
+#                      'cup', 'treatments', 'sponge', 'bath_slipper']
+
+object_dictionary = ['plate', 'bowl', 'pitcher_base', 'banana', 'apple', 'orange', 'cracker_box', 'pudding_box',
+                     'chips_bag', 'coffee', 'muscat', 'fruits_juice', 'pig_doll', 'sheep_doll', 'penguin_doll',
+                     'airplane_toy', 'car_toy', 'truck_toy', 'tooth_paste', 'towel', 'cup', 'treatments', 'sponge',
+                     'bath_slipper', 'dolphin_shaped_sponge', 'flog_shaped_sponge']
 ####################Option setting (NOT USE)####################
 UseFT = 1       #画像特徴を使う場合 (１) 、使わない場合 (０) 
 UseLM = 1       #言語モデルを更新する場合 (１) 、しない場合 (０) 
