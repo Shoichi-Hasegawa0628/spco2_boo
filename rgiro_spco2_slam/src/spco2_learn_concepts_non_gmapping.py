@@ -1262,7 +1262,7 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    N = 180
+    N = 120
     for step in tqdm(range(1, N+1)): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
