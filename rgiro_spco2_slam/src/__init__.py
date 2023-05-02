@@ -13,9 +13,9 @@ dimx = 2             #The number of dimensions of xt (x,y)
 ##Initial (hyper) parameters
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
 # alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
-alpha0 = 18.5 # 0.04
-gamma0 = 0.08      #Hyperparameter of CRP in multinomial distribution for index of position distribution
-beta0 = 0.1          #Hyperparameter in multinomial distribution P(W) for place names
+alpha0 = 0.01 # 18.5
+gamma0 = 0.01 # 0.08      #Hyperparameter of CRP in multinomial distribution for index of position distribution
+beta0 = 0.1 # 0.1          #Hyperparameter in multinomial distribution P(W) for place names
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
 # k0 = 1e-3          #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
 k0 = 0.20           #注意
