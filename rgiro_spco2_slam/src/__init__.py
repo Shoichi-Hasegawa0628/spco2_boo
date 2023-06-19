@@ -13,7 +13,7 @@ dimx = 2             #The number of dimensions of xt (x,y)
 ##Initial (hyper) parameters
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
 # alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
-alpha0 = 0.01 # 18.5
+alpha0 = 18.5
 gamma0 = 0.01 # 0.08      #Hyperparameter of CRP in multinomial distribution for index of position distribution
 beta0 = 0.1 # 0.1          #Hyperparameter in multinomial distribution P(W) for place names
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
@@ -36,9 +36,14 @@ LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
 lamb = 5.0
 
-object_dictionary = ['bowl', 'pitcher_base', 'apple', 'orange', 'cracker_box', 'pudding_box',
-                     'coffee', 'muscat', 'sheep_doll', 'penguin_doll',
-                     'car_toy', 'truck_toy', 'towel', 'cup', 'sponge', 'bath_slipper']
+object_dictionary = ['bowl', 'banana', 'apple', 'orange', 'cracker_box', 'pudding_box',
+                     'chips_bag', 'coffee', 'muscat', 'fruits_juice', 'pig_doll', 'sheep_doll',
+                     'penguin_doll', 'airplane_toy', 'car_toy', 'truck_toy', 'towel',
+                     'cup', 'sponge', 'bath_slipper']
+
+# object_dictionary = ['bowl', 'pitcher_base', 'apple', 'orange', 'cracker_box', 'pudding_box',
+#                      'coffee', 'muscat', 'sheep_doll', 'penguin_doll',
+#                      'car_toy', 'truck_toy', 'towel', 'cup', 'sponge', 'bath_slipper']
 
 # object_dictionary = ['plate', 'bowl', 'pitcher_base', 'banana', 'apple', 'orange', 'cracker_box', 'pudding_box',
 #                      'chips_bag', 'coffee', 'muscat', 'fruits_juice', 'pig_doll', 'sheep_doll', 'penguin_doll',
