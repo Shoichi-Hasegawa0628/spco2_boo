@@ -13,14 +13,14 @@ dimx = 2             #The number of dimensions of xt (x,y)
 ##Initial (hyper) parameters
 ##Posterior (∝likelihood×prior): https://en.wikipedia.org/wiki/Conjugate_prior
 # alpha0 = 20.0        #Hyperparameter of CRP in multinomial distribution for index of spatial concept
-alpha0 = 18.5
-gamma0 = 0.01 # 0.08      #Hyperparameter of CRP in multinomial distribution for index of position distribution
+alpha0 = 0.1 #0.01
+gamma0 = 0.08 # 0.08      #Hyperparameter of CRP in multinomial distribution for index of position distribution
 beta0 = 0.1 # 0.1          #Hyperparameter in multinomial distribution P(W) for place names
 chi0  = 0.1          #Hyperparameter in multinomial distribution P(φ) for image feature
 # k0 = 1e-3          #Hyperparameter in Gaussina distribution P(μ) (Influence degree of prior distribution of μ)
 k0 = 0.20           #注意
 m0 = np.zeros(dimx)  #Hyperparameter in Gaussina distribution P(μ) (prior mean vector)
-V0 = np.eye(dimx)*1  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix)
+V0 = np.eye(dimx)*2  #Hyperparameter in Inverse Wishart distribution P(Σ) (prior covariance matrix)
 n0 = 3.0             #Hyperparameter in Inverse Wishart distribution P(Σ) {>the number of dimenssions] (Influence degree of prior distribution of Σ)
 k0m0m0 = k0*np.dot(np.array([m0]).T,np.array([m0]))
 
@@ -34,12 +34,18 @@ tyokuzen = 0        #直前のステップの言語モデルで音声認識 (１
 LMweight = "weight" #wf*ws="weight", P(S{1:t}|c{1:t-1},α,β)/p(S{1:t}|β) = "WS"
 
 #SpCoSLAM (Bag-Of-Objects追加バージョン)
-lamb = 5.0
+lamb = 0.1
+object_dictionary = ["plate", "bowl", "pitcher_base", "banana",
+                      "apple", "orange", "cracker_box", "pudding_box",
+                      "chips_bag", "coffee", "muscat", "fruits_juice",
+                      "pig_doll", "sheep_doll", "penguin_doll", "airplane_toy",
+                      "car_toy", "truck_toy", "tooth_paste", "towel",
+                      "cup", "treatments", "sponge", "bath_slipper"]
 
-object_dictionary = ['bowl', 'banana', 'apple', 'orange', 'cracker_box', 'pudding_box',
-                     'chips_bag', 'coffee', 'muscat', 'fruits_juice', 'pig_doll', 'sheep_doll',
-                     'penguin_doll', 'airplane_toy', 'car_toy', 'truck_toy', 'towel',
-                     'cup', 'sponge', 'bath_slipper']
+# object_dictionary = ['bowl', 'banana', 'apple', 'orange', 'cracker_box', 'pudding_box',
+#                      'chips_bag', 'coffee', 'muscat', 'fruits_juice', 'pig_doll', 'sheep_doll',
+#                      'penguin_doll', 'airplane_toy', 'car_toy', 'truck_toy', 'towel',
+#                      'cup', 'sponge', 'bath_slipper']
 
 # object_dictionary = ['bowl', 'pitcher_base', 'apple', 'orange', 'cracker_box', 'pudding_box',
 #                      'coffee', 'muscat', 'sheep_doll', 'penguin_doll',
