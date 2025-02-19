@@ -59,3 +59,4 @@ Teaching the place name while teleoping with `rqt`.
 
 ## Reference
 - [SpCoSLAM 2.0](https://github.com/a-taniguchi/SpCoSLAM2)
+- https://www.tandfonline.com/doi/full/10.1080/18824889.2023.2283954
