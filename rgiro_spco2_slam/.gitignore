@@ -4,3 +4,4 @@ src/*.txt
 src/*.tar
 src/*.npy
 src/wideresnet.py
+src/__pycache__/

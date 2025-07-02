@@ -102,7 +102,7 @@ import multiprocessing
 from __init__ import *
 from spco2_math import *
 import csv  # Takeshi Nakashima 2021/03/06
-import rospy
+# import rospy
 from std_msgs.msg import String
 import std_msgs.msg
 import sys
@@ -116,41 +116,43 @@ import nltk
 
 # ストップワードの読み込み
 nltk.download('stopwords')
-# ['i', 'me', 'my', 'myself', 'we', 'our',
-# 'ours', 'ourselves', 'you', "you're", "you've",
-# "you'll", "you'd", 'your', 'yours', 'yourself',
-# 'yourselves', 'he', 'him', 'his', 'himself',
-# 'she', "she's", 'her', 'hers', 'herself', 'it',
-# "it's", 'its', 'itself', 'they', 'them', 'their',
-# 'theirs', 'themselves', 'what', 'which', 'who', 'whom',
-# 'this', 'that', "that'll", 'these', 'those', 'am', 'is',
-# 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has',
-# 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the',
-# 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of',
-# 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into',
-# 'through', 'during', 'before', 'after', 'above', 'below',
-# 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off',
-# 'over', 'under', 'again', 'further', 'then', 'once', 'here',
-# 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both',
-# 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no',
-# 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very',
-# 's', 't', 'can', 'will', 'just', 'don', "don't", 'should', "should've",
-# 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't",
-# 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn',
-# "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma',
-# 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan',
-# "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't",
-# 'won', "won't", 'wouldn', "wouldn't"]
-
-
 stop_words = stopwords.words('english')
-stop_words.append(",")
-stop_words.append("?")
-stop_words.append("!")
-stop_words.append("room")
-stop_words.append("i'm")
-stop_words.append("let's")
-stop_words.append("This")
+basic_stopwords = [
+    "the", "and", "to", "of", "a", "in", "that", "is", "was", "he", "for", "it", "with", "as", "his", "on",
+    "be", "at", "by", "i", "this", "had", "not", "are", "but", "from", "or", "have", "an", "they", "which",
+    "one", "you", "were", "her", "all", "she", "there", "would", "their", "we", "him", "been", "has", "when",
+    "who", "will", "no", "more", "if", "out", "so", "said", "what", "up", "its", "about", "into", "than", "them",
+    "can", "only", "other", "new", "some", "could", "time", "these", "two", "may", "then", "do", "first", "any",
+    "like", "my", "now", "such", "make", "over", "our", "even", "most", "me", "also", ",", "?", "!", "room", 
+    "i'm", "let's", "This", "The", "image", "shows", "floor", "white", "black", "visible", "appears",
+    "placed", "simple", "setting", "next", "part", "near", "object", "right", "below", "piece", "nearby", 
+    "overall", "appearance", "scene", "suggests", "possibly", "area", "items", "pattern", "side", "featuring",
+    "myself", "ours", "ourselves", "you're", "you've", "you'll", "you'd", "your", "yours", "yourself", "yourselves", 
+    "himself", "she's", "hers", "herself", "it's", "itself", "theirs", "themselves", "whom", "that'll", "those", "am",
+    "being", "having", "does", "did", "doing", "because", "until", "while", "against", "between", "through", "during", 
+    "before", "after", "above", "down", "off", "under", "again", "further", "once", "here", "where", "why", "how", 
+    "both", "each", "few", "nor", "own", "same", "too", "very", "s", "t", "just", "don", "don't", "should", "should've",
+    "d", "ll", "m", "o", "re", "ve", "y", "ain", "aren", "aren't", "couldn", "couldn't", "didn", "didn't", "doesn", 
+    "doesn't", "hadn", "hadn't", "hasn", "hasn't", "haven", "haven't", "isn", "isn't", "ma", "mightn", "mightn't", 
+    "mustn", "mustn't", "needn", "needn't", "shan", "shan't", "shouldn", "shouldn't", "wasn", "wasn't", "weren", 
+    "weren't", "won", "won't", "wouldn", "wouldn't", "wall", "dark", "background", "single", "pair", "left", "model",
+    "covered", "behind", "various", "A", "center", "On", "In", "patterned", "seen", "There", "including", "Below",
+    "three", "adding", "along", "four", "giving", "Next", "To", "partially", "beyond", "finish", "setup", "Additionally",
+    "It", "seems", "another", "leading", "partial", "likely", "Nearby", "used", "tasks", "providing", "might",
+    "use", "task", "Also", "includes", "suggesting", "An", "multiple", "made", "empty", "upright", "there's",
+    "together", "beside", "alongside", "Beside", "details", "attention", "adds", "section", "similar",
+    "inside", "front", "Part", "indicating", "positioned", "construction", "task", "creating", "focus",
+    "features", "contents", "focusing", "holding", "designs", "holds", "variety", "design", "distance", 
+    "structure", "organized", "several", "typical", "space", "modern", "arrangement", "unfinished",
+    "Against", "arranged", "lying", "backs", "lies", "walls", "revealing", "disorganized", "resembling",
+    "standing", "mix", "atmosphere", "complements", "depicts", "complementing", "slightly", "neutral",
+    "neatly", "contemporary", "deep", "compartment", "compartments", "makeshift", "underneath", "everyday",
+    "vanity", "laid", "project", "environment", "feet", "reveals", "glimpse", "Two", "indoor", "indoors",
+    "decorative", "touch", "flooring", "plain", "uncluttered", "activity", "cluttered", "around", "shown", "surface",
+    "top", "sliding", "edge", "cozy", "open", "scattered", "Room", "Small", "supplies", "chisel", "appliances",
+    "objects", "tools", "furniture", "Wooden", "wooden"
+]
+stop_words.extend(basic_stopwords)
 
 # import sys
 # import roslib.packages
@@ -1262,11 +1264,11 @@ def Learning(step, filename, particle, XT, ST, W_list, CT, IT, FT, OT, Object_W_
 ########################################
 # def callback(message):
 def callback():
-    N = 20
+    N = 108 # データ数
     for step in tqdm(range(1, N+1)): # 追加学習するときは、この値を追加するデータ分だけ入れる。
         # trialname = rospy.get_param('~trial_name')
         # datasetNUM = rospy.get_param('~dataset_NUM')
-        step = step + 120 # 追加学習分
+        # step = step + 120 # 追加学習のとき
         trialname = "test"
         datasetNUM = "0"
         # print("Start_Learning")
@@ -1473,15 +1475,15 @@ def callback():
         ########################################
 
         ## Publish messeage for start_visualization
-        str_msg = 'start_visualization'  # std_msgs.msg.String(data= message.data )
+        # str_msg = 'start_visualization'  # std_msgs.msg.String(data= message.data )
         # print("Publish!")
         # print("OT: {}".format(OT))
-        pub.publish(str_msg)
+        # pub.publish(str_msg)
 
 
 if __name__ == '__main__':
-    rospy.init_node('SpCoSLAM', anonymous=False)
+    # rospy.init_node('SpCoSLAM', anonymous=False)
     # sub = rospy.Subscriber('start_learning', String, callback)
-    pub = rospy.Publisher('start_visualization', std_msgs.msg.String, queue_size=10, latch=True)
+    # pub = rospy.Publisher('start_visualization', std_msgs.msg.String, queue_size=10, latch=True)
     callback()
-    rospy.spin()
+    # rospy.spin()
