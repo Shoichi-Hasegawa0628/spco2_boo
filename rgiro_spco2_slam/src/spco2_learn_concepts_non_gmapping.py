@@ -118,43 +118,12 @@ import nltk
 nltk.download('stopwords')
 stop_words = stopwords.words('english')
 basic_stopwords = [
-    "the", "and", "to", "of", "a", "in", "that", "is", "was", "he", "for", "it", "with", "as", "his", "on",
-    "be", "at", "by", "i", "this", "had", "not", "are", "but", "from", "or", "have", "an", "they", "which",
-    "one", "you", "were", "her", "all", "she", "there", "would", "their", "we", "him", "been", "has", "when",
-    "who", "will", "no", "more", "if", "out", "so", "said", "what", "up", "its", "about", "into", "than", "them",
-    "can", "only", "other", "new", "some", "could", "time", "these", "two", "may", "then", "do", "first", "any",
-    "like", "my", "now", "such", "make", "over", "our", "even", "most", "me", "also", ",", "?", "!", "room", 
-    "i'm", "let's", "This", "The", "image", "shows", "floor", "white", "black", "visible", "appears",
-    "placed", "simple", "setting", "next", "part", "near", "object", "right", "below", "piece", "nearby", 
-    "overall", "appearance", "scene", "suggests", "possibly", "area", "items", "pattern", "side", "featuring",
-    "myself", "ours", "ourselves", "you're", "you've", "you'll", "you'd", "your", "yours", "yourself", "yourselves", 
-    "himself", "she's", "hers", "herself", "it's", "itself", "theirs", "themselves", "whom", "that'll", "those", "am",
-    "being", "having", "does", "did", "doing", "because", "until", "while", "against", "between", "through", "during", 
-    "before", "after", "above", "down", "off", "under", "again", "further", "once", "here", "where", "why", "how", 
-    "both", "each", "few", "nor", "own", "same", "too", "very", "s", "t", "just", "don", "don't", "should", "should've",
-    "d", "ll", "m", "o", "re", "ve", "y", "ain", "aren", "aren't", "couldn", "couldn't", "didn", "didn't", "doesn", 
-    "doesn't", "hadn", "hadn't", "hasn", "hasn't", "haven", "haven't", "isn", "isn't", "ma", "mightn", "mightn't", 
-    "mustn", "mustn't", "needn", "needn't", "shan", "shan't", "shouldn", "shouldn't", "wasn", "wasn't", "weren", 
-    "weren't", "won", "won't", "wouldn", "wouldn't", "wall", "dark", "background", "single", "pair", "left", "model",
-    "covered", "behind", "various", "A", "center", "On", "In", "patterned", "seen", "There", "including", "Below",
-    "three", "adding", "along", "four", "giving", "Next", "To", "partially", "beyond", "finish", "setup", "Additionally",
-    "It", "seems", "another", "leading", "partial", "likely", "Nearby", "used", "tasks", "providing", "might",
-    "use", "task", "Also", "includes", "suggesting", "An", "multiple", "made", "empty", "upright", "there's",
-    "together", "beside", "alongside", "Beside", "details", "attention", "adds", "section", "similar",
-    "inside", "front", "Part", "indicating", "positioned", "construction", "task", "creating", "focus",
-    "features", "contents", "focusing", "holding", "designs", "holds", "variety", "design", "distance", 
-    "structure", "organized", "several", "typical", "space", "modern", "arrangement", "unfinished",
-    "Against", "arranged", "lying", "backs", "lies", "walls", "revealing", "disorganized", "resembling",
-    "standing", "mix", "atmosphere", "complements", "depicts", "complementing", "slightly", "neutral",
-    "neatly", "contemporary", "deep", "compartment", "compartments", "makeshift", "underneath", "everyday",
-    "vanity", "laid", "project", "environment", "feet", "reveals", "glimpse", "Two", "indoor", "indoors",
-    "decorative", "touch", "flooring", "plain", "uncluttered", "activity", "cluttered", "around", "shown", "surface",
-    "top", "sliding", "edge", "cozy", "open", "scattered", "Room", "Small", "supplies", "chisel", "appliances",
-    "objects", "tools", "furniture", "Wooden", "wooden"
+    "This", "area", "call", "space", "The", "right", "Here", "Here's", "That's", "find", "You", "see",
+    "location"
 ]
 stop_words.extend(basic_stopwords)
 
-# import sys
+
 # import roslib.packages
 
 """
